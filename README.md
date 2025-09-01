@@ -1,11 +1,12 @@
-# Nombre de la aplicación
+# ALMACENAPP
 
-Reemplace este texto con una descripción de su aplicación. Revise el archivo [HELP.md](HELP.md) donde hay mas información sobre como usar esta plantilla.
+Crear una aplicacion que ayude a realizar la gestion de un almacen para llevar un control de salidas e ingresos que muestre la unidades disponibles en tiempo real
 
-Autor(es): Nombre del estudiante
+Autor(es): Rowinzon Estivell Tellez Estepa
 
 ## Referencias
 
-- [Ideas iniciales de proyecto](docs/ideas.md)
+- https://docs.google.com/document/d/1SqsczkOI87CcKMPA6wfTGhPS2LpWzivNxCFxVPcEJAI/edit?tab=t.0
+cambie la idea por lo explicado en la clase de que la aplicacion no cumplia con los requerimientos de complejidad
 - [Funcionalidades de la aplicación](docs/funcionalidades.md)
 - [Diseño de la interfaz de usuario](docs/ui.md)
