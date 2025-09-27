@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
                                 pantallaActual = when (destino) {
                                     "Log In" -> "principal"
                                     "Settings" -> "settings"
+                                    "Inventory" -> "inventory"
                                     else -> pantallaActual
                                 }
                             }
@@ -39,13 +40,17 @@ class MainActivity : ComponentActivity() {
 
                         // LOGIN / PRINCIPAL
                         "principal" -> PantallaPrincipal(
-                            onLoginSuccess = { pantallaActual = "login" }, // vuelve al login
-                            onBack = { pantallaActual = "login" }          // botón volver
+                            onLoginSuccess = { pantallaActual = "inventory" }, // va a la pantalla de inventario
+                            onBack = { pantallaActual = "login" }
                         )
-
                         // SETTINGS
                         "settings" -> AccionesConf(
                             onBack = { pantallaActual = "login" }, // regresa a principal
+                            onHome = { pantallaActual = "login" }      // vuelve al home
+                        )
+                        //Inventory
+                        "inventory" -> Inventory(
+                            onBack = { pantallaActual = "principal" }, // vuelve a login si quieres
                             onHome = { pantallaActual = "login" }      // vuelve al home
                         )
                     }

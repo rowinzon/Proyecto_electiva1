@@ -10,11 +10,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.graphicsLayer
 
 
 @Composable
 fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
     TopBarButtons(onBack = onBack, onHome = onHome)
+
+    var pushNotificationEnabled by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -38,27 +41,31 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Push Notification",
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Button(
-                        onClick = { isSelected = !isSelected },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) Color.Blue else Color.Gray
-                        ),
-                        modifier = Modifier
-                            .width(40.dp)
-                            .height(30.dp)
-                    ) {}
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(0.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Push Notification",
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = pushNotificationEnabled,
+                            onCheckedChange = { pushNotificationEnabled = it },
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = 0.75f
+                                scaleY = 0.75f
+                            }
+                        )
+                    }
                 }
                 val opciones = listOf(
                     "Invite a friend",

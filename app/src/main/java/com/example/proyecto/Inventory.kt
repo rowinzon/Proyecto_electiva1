@@ -20,8 +20,13 @@ import androidx.compose.foundation.layout.Arrangement
 fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
     TopBarButtons(onBack = onBack, onHome = onHome)
 
-    Box(modifier = Modifier.fillMaxSize()){
-
+    Box(modifier = Modifier.fillMaxSize().padding(100.dp)){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text( text = "Si entro",color = Color.Black,fontSize = 18.sp )
+        }
     }
 }
 
