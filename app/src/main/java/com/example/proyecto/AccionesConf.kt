@@ -9,15 +9,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
+
 
 @Composable
-fun AccionesConf() {
+fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
+    TopBarButtons(onBack = onBack, onHome = onHome)
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         var isSelected by remember { mutableStateOf(false) }
-
-        // Título
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -26,8 +28,6 @@ fun AccionesConf() {
         ) {
             Text("Settings", fontSize = 30.sp, color = Color.Black)
         }
-
-        // Card con texto y botón
         Card(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -38,34 +38,51 @@ fun AccionesConf() {
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = "Funciona", fontSize = 20.sp, color = Color.Blue)
-
-                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Push Notification", color = Color.Black)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Button(
-                            onClick = { isSelected = !isSelected },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isSelected) Color.Blue else Color.Gray
-                            )
-                        ) {
-                        }
-                    }
+                    Text(
+                        text = "Push Notification",
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(
+                        onClick = { isSelected = !isSelected },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) Color.Blue else Color.Gray
+                        ),
+                        modifier = Modifier
+                            .width(40.dp)
+                            .height(30.dp)
+                    ) {}
+                }
+                val opciones = listOf(
+                    "Invite a friend",
+                    "Rate this app",
+                    "Feedback & Bugs",
+                    "Terms & Conditions",
+                    "Privacy Policy"
+                )
+                opciones.forEach { opcion ->
+                    Text(
+                        text = opcion,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
                 }
             }
         }
+
     }
 }
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAccionesPreview() {
-    AccionesConf()
+    AccionesConf(onBack = {}, onHome = {})
 }

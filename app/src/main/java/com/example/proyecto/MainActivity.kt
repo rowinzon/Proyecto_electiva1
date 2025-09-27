@@ -9,11 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import com.example.proyecto.ui.theme.ProyectoTheme
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.proyecto.ui.theme.ProyectoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,11 +25,29 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     when (pantallaActual) {
+                        // HOME
                         "login" -> Greeting(
                             modifier = Modifier.padding(innerPadding),
-                            onLoginSuccess = { pantallaActual = "acciones" }
+                            onNavigate = { destino ->
+                                pantallaActual = when (destino) {
+                                    "Log In" -> "principal"
+                                    "Settings" -> "settings"
+                                    else -> pantallaActual
+                                }
+                            }
                         )
-                        "acciones" -> AccionesConf()
+
+                        // LOGIN / PRINCIPAL
+                        "principal" -> PantallaPrincipal(
+                            onLoginSuccess = { pantallaActual = "login" }, // vuelve al login
+                            onBack = { pantallaActual = "login" }          // botón volver
+                        )
+
+                        // SETTINGS
+                        "settings" -> AccionesConf(
+                            onBack = { pantallaActual = "login" }, // regresa a principal
+                            onHome = { pantallaActual = "login" }      // vuelve al home
+                        )
                     }
                 }
             }
@@ -37,101 +55,45 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+// ---------- HOME ----------
 @Composable
-fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit) {
-    var userName by remember { mutableStateOf("") }
-    var passwordUser by remember { mutableStateOf("") }
-    var rememberMe by remember { mutableStateOf(false) }
-    var loginMessage by remember { mutableStateOf("") }
-
-
+fun Greeting(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 100.dp), // ajusta la distancia desde arriba
+            modifier = modifier.padding(top = 100.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                "INVENTORY-APP",
-                fontSize = 30.sp,
-                color = Color.Black
-            )
-        }
-        Card(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.9f)
-                .wrapContentHeight(),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.LightGray
-            ),
-            elevation = CardDefaults.cardElevation(8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Text("INVENTORI-APP", fontSize = 30.sp, color = Color.Black)
+
+            Card(
+                modifier = Modifier.padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
             ) {
-                Text("Username", fontSize = 20.sp, color = Color.Black)
-
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = userName,
-                    onValueChange = { userName = it },
-                    label = { Text("Nombre de usuario") }
-                )
-
-                Text("Password", fontSize = 20.sp, color = Color.Black)
-
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = passwordUser,
-                    onValueChange = { passwordUser = it },
-                    label = { Text("Contraseña") }
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = rememberMe,
-                            onCheckedChange = { rememberMe = it }
-                        )
-                        Text("Recordarme", color = Color.Black)
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text("Forget password", color = Color.Black)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        if (userName == "Prueba") {
-                            onLoginSuccess()
-                        } else {
-                            loginMessage = "usuario incorrecto"
+                    val opciones = listOf("Log In", "Settings")
+                    opciones.forEach { opcion ->
+                        TextButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                            onClick = { onNavigate(opcion) }
+                        ) {
+                            Text(
+                                text = opcion,
+                                fontSize = 18.sp,
+                                color = Color.Black
+                            )
                         }
                     }
-                ) {
-                    Text("Login")
-                }
-
-                if (loginMessage.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = loginMessage,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.error
-                    )
                 }
             }
         }
@@ -142,6 +104,6 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: () -> Unit) {
 @Composable
 fun GreetingPreview() {
     ProyectoTheme {
-        Greeting(onLoginSuccess = {})
+        Greeting(onNavigate = {})
     }
 }
