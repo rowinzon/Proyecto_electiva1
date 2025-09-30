@@ -15,19 +15,67 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 
 @Composable
 fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
     TopBarButtons(onBack = onBack, onHome = onHome)
-
-    Box(modifier = Modifier.fillMaxSize().padding(100.dp)){
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    var isSelected by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.padding(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
         ){
-            Text( text = "Si entro",color = Color.Black,fontSize = 18.sp )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                val opciones = listOf(
+                    "Stock",
+                    "Generar entrada",
+                    "Generar salida",
+                    "Crear Elementos",
+                    "Eliminar Datos"
+                )
+                opciones.forEach { opcion ->
+                    TextButton(
+                        onClick = {
+                            when (opcion) {
+                                "Stock" -> {  }
+                                "Generar entrada" -> {  }
+                                "Generar salida" -> {  }
+                                "Crear Elementos" -> {  }
+                                "Eliminar Datos" -> {  }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = opcion,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
         }
     }
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)

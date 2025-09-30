@@ -74,14 +74,43 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
                     "Terms & Conditions",
                     "Privacy Policy"
                 )
+
                 opciones.forEach { opcion ->
-                    Text(
-                        text = opcion,
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start
-                    )
+                    TextButton(
+                        onClick = {
+                            when (opcion) {
+                                "Invite a friend" -> {
+                                    // Acción para invitar a un amigo
+                                    println("Invitar a un amigo")
+                                }
+                                "Rate this app" -> {
+                                    // Acción para calificar la app
+                                    println("Calificar la app")
+                                }
+                                "Feedback & Bugs" -> {
+                                    // Acción para enviar feedback
+                                    println("Feedback & Bugs")
+                                }
+                                "Terms & Conditions" -> {
+                                    // Acción para abrir Términos y Condiciones
+                                    println("Abrir Términos y Condiciones")
+                                }
+                                "Privacy Policy" -> {
+                                    // Acción para abrir la Política de Privacidad
+                                    println("Abrir Política de Privacidad")
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = opcion,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }

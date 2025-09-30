@@ -2,6 +2,7 @@ package com.example.proyecto
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,7 +93,18 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                         Text("Recordarme", color = Color.Black)
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Text("Forget password", color = Color.Black)
+                    TextButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                    onClick = { loginMessage ="funciona el boton" }
+                    ) {
+                    Text(
+                        text = "Forget Password",
+                        fontSize = 18.sp,
+                        color = Color.Black
+                    )
+                }
                 }
 
                 // Botón Login
