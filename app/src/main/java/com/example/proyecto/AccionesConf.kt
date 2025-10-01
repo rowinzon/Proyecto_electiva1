@@ -64,12 +64,12 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
                             text = "Push Notification",
                             fontSize = 20.sp,
                             color = Color.Black,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.padding(8.dp).weight(1f)
                         )
                         Switch(
                             checked = pushNotificationEnabled,
                             onCheckedChange = { pushNotificationEnabled = it },
-                            modifier = Modifier.graphicsLayer {
+                            modifier = Modifier.padding(8.dp).graphicsLayer {
                                 scaleX = 0.75f
                                 scaleY = 0.75f
                             }
