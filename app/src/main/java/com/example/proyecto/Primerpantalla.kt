@@ -11,6 +11,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+
 @Composable
 fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
     var userName by remember { mutableStateOf("") }
@@ -62,24 +69,23 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 // Username
-                Text("Username", fontSize = 20.sp, color = Color.Black)
+                iconos_contexto(iconRes = R.drawable.username, label = "Username")
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = userName,
                     onValueChange = { userName = it },
                     label = { Text("Nombre de usuario") }
                 )
-
                 // Password
-                Text("Password", fontSize = 20.sp, color = Color.Black)
+                iconos_contexto(iconRes = R.drawable.password, label = "Password")
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = passwordUser,
                     onValueChange = { passwordUser = it },
                     label = { Text("Contraseña") }
                 )
-
                 // Recordarme + Forget password
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -106,7 +112,6 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                     )
                 }
                 }
-
                 // Botón Login
                 Button(
                     onClick = {
@@ -119,7 +124,6 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 ) {
                     Text("Login")
                 }
-
                 // Mensaje de error
                 if (loginMessage.isNotEmpty()) {
                     Text(

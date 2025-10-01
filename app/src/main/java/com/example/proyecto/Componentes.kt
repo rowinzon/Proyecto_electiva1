@@ -1,63 +1,24 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 package com.example.proyecto
 
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.Row
-//import androidx.compose.foundation.layout.fillMaxSize
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.material3.Text
-//import androidx.compose.material3.TextButton
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.tooling.preview.Preview
-//import androidx.compose.ui.unit.sp
-//import androidx.compose.foundation.layout.padding
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.foundation.layout.Arrangement
-//
-//@Composable
-//fun TopBarButtons(
-//    onBack: () -> Unit,
-//    onHome: () -> Unit
-//) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        TextButton(onClick = { onBack() }) {
-//            Text(
-//                text = "volver",
-//                color = Color.Black,
-//                fontSize = 18.sp
-//            )
-//        }
-//
-//        TextButton(onClick = { onHome() }) {
-//            Text(
-//                text = "home",
-//                color = Color.Black,
-//                fontSize = 18.sp
-//            )
-//        }
-//    }
-//}
-//
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun PantallaComponentesPreview() {
-//    TopBarButtons(onBack = {}, onHome = {})
-//}
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 
 @Composable
@@ -85,8 +46,50 @@ fun TopBarButtons(
         }
     )
 }
+@Composable
+fun iconos_contexto(
+    iconRes: Int,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        modifier = modifier
+    ) {
+        val painter = painterResource(id = iconRes)
+        Image(
+            painter = painter,
+            contentDescription = label,
+            modifier = Modifier.size(40.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(label, fontSize = 20.sp, color = Color.Black)
+    }
+}
+
+@Composable
+fun OpcionItem(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = label,
+            fontSize = 20.sp,
+            color = Color.Black,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaComponentesPreview() {
-    TopBarButtons(onBack = {}, onHome = {})
+    iconos_contexto(iconRes = R.drawable.username, label = "Username")
 }
