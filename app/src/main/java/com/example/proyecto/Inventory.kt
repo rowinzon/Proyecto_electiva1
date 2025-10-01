@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 
@@ -74,6 +75,8 @@ fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
                 }
             }
         }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
     }
 
 }

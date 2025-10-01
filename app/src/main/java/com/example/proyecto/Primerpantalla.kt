@@ -1,5 +1,4 @@
 package com.example.proyecto
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.TextButton
@@ -10,21 +9,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-
 @Composable
 fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
     var userName by remember { mutableStateOf("") }
     var passwordUser by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     var loginMessage by remember { mutableStateOf("") }
-
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         horizontalArrangement = Arrangement.Start
@@ -37,7 +29,6 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
             )
         }
     }
-
     Box(modifier = Modifier.fillMaxSize()) {
         // Título de la app
         Column(
@@ -52,6 +43,7 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 color = Color.Black
             )
         }
+        //imagen uan
 
         // Card con formulario
         Card(
@@ -69,7 +61,6 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 // Username
                 iconos_contexto(iconRes = R.drawable.username, label = "Username")
                 TextField(
@@ -134,6 +125,8 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 }
             }
         }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
     }
 }
 @Preview(showBackground = true, showSystemUi = true)

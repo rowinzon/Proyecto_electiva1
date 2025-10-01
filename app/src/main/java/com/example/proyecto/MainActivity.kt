@@ -72,7 +72,6 @@ fun Greeting(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("INVENTORI-APP", fontSize = 30.sp, color = Color.Black)
-
             Card(
                 modifier = Modifier.padding(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
@@ -101,6 +100,7 @@ fun Greeting(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                     }
                 }
             }
+            LogoUan(modifier = Modifier.size(240.dp))
         }
     }
 }

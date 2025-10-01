@@ -98,11 +98,21 @@ fun OpcionItem(
         }
     }
 }
+@Composable
+fun LogoUan( modifier: Modifier = Modifier) {
 
-
+    Image(
+        painter = painterResource(R.drawable.logouan),
+        contentDescription = "Logo de la Universidad UAN",
+        modifier = modifier
+    )
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaComponentesPreview() {
-    iconos_contexto(iconRes = R.drawable.username, label = "Username")
+    LogoUan(
+        modifier = Modifier.size(240.dp)
+    )
+
 }

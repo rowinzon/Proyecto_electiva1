@@ -106,7 +106,8 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
                 }
             }
         }
-
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
     }
 }
 @Preview(showBackground = true, showSystemUi = true)
