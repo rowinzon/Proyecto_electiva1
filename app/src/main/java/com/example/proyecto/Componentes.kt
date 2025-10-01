@@ -70,6 +70,7 @@ fun iconos_contexto(
 @Composable
 fun OpcionItem(
     label: String,
+    iconRes: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -77,15 +78,27 @@ fun OpcionItem(
         onClick = onClick,
         modifier = modifier.fillMaxWidth()
     ) {
-        Text(
-            text = label,
-            fontSize = 20.sp,
-            color = Color.Black,
-            textAlign = TextAlign.Start,
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            // Imagen a la izquierda
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = label,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            // Texto
+            Text(
+                text = label,
+                fontSize = 20.sp,
+                color = Color.Black
+            )
+        }
     }
 }
+
 
 
 @Preview(showBackground = true, showSystemUi = true)

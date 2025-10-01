@@ -1,5 +1,6 @@
 package com.example.proyecto
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 
 
 @Composable
@@ -51,6 +53,13 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
                         modifier = Modifier.fillMaxWidth().padding(0.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val painter = painterResource(R.drawable.notification)
+                        Image(
+                            painter = painter,
+                            contentDescription = "",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Push Notification",
                             fontSize = 20.sp,
@@ -68,47 +77,30 @@ fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
                     }
                 }
                 val opciones = listOf(
-                    "Invite a friend",
-                    "Rate this app",
-                    "Feedback & Bugs",
-                    "Terms & Conditions",
-                    "Privacy Policy"
+                    "Invite a friend" to R.drawable.invite,
+                    "Rate this app" to R.drawable.rate,
+                    "Feedback & Bugs" to R.drawable.feedback,
+                    "Terms & Conditions" to R.drawable.terms,
+                    "Privacy Policy" to R.drawable.privacy
                 )
-
-                opciones.forEach { opcion ->
-                    TextButton(
-                        onClick = {
-                            when (opcion) {
-                                "Invite a friend" -> {
-                                    // Acción para invitar a un amigo
-                                    println("Invitar a un amigo")
-                                }
-                                "Rate this app" -> {
-                                    // Acción para calificar la app
-                                    println("Calificar la app")
-                                }
-                                "Feedback & Bugs" -> {
-                                    // Acción para enviar feedback
-                                    println("Feedback & Bugs")
-                                }
-                                "Terms & Conditions" -> {
-                                    // Acción para abrir Términos y Condiciones
-                                    println("Abrir Términos y Condiciones")
-                                }
-                                "Privacy Policy" -> {
-                                    // Acción para abrir la Política de Privacidad
-                                    println("Abrir Política de Privacidad")
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier
+                ) {
+                    opciones.forEach { (opcion, icon) ->
+                        OpcionItem(
+                            label = opcion,
+                            iconRes = icon,
+                            onClick = {
+                                when (opcion) {
+                                    "Invite a friend" -> println("Invitar a un amigo")
+                                    "Rate this app" -> println("Calificar la app")
+                                    "Feedback & Bugs" -> println("Feedback & Bugs")
+                                    "Terms & Conditions" -> println("Abrir Términos y Condiciones")
+                                    "Privacy Policy" -> println("Abrir Política de Privacidad")
                                 }
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = opcion,
-                            fontSize = 20.sp,
-                            color = Color.Black,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
