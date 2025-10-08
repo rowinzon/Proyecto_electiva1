@@ -14,10 +14,10 @@ La aplicación tendrá la siguientes pantallas
 
 # pantalla de settings
 
-docs/Captura de pantalla 2025-09-26 182807.png
+<img width="526" height="881" alt="image" src="https://github.com/user-attachments/assets/d853ed16-0b90-4c89-a682-0f28d2a3d1df" />
+
 
 
 # pantalla de logeo 
 
-![Uploading Captura de pantalla 2025-09-26 182816.png…]()
-
+<img width="503" height="897" alt="image" src="https://github.com/user-attachments/assets/033c4b04-1ed1-4113-93ef-e36086576a8f" />
