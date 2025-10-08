@@ -14,7 +14,7 @@ La aplicación tendrá la siguientes pantallas
 
 # pantalla de settings
 
-![Uploading Captura de pantalla 2025-09-26 182807.png…]()
+docs/Captura de pantalla 2025-09-26 182807.png
 
 
 # pantalla de logeo 
