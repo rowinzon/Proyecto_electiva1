@@ -14,7 +14,10 @@ La aplicación tendrá la siguientes pantallas
 
 # pantalla de settings
 
-https://github.com/rowinzon/Proyecto_electiva1/blob/main/docs/Captura%20de%20pantalla%202025-09-26%20182807.png
+![Uploading Captura de pantalla 2025-09-26 182807.png…]()
+
 
 # pantalla de logeo 
-https://github.com/rowinzon/Proyecto_electiva1/blob/main/docs/Captura%20de%20pantalla%202025-09-26%20182816.png
+
+![Uploading Captura de pantalla 2025-09-26 182816.png…]()
+
