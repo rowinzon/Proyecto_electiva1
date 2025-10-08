@@ -21,8 +21,12 @@ La aplicación tendrá la siguientes pantallas
 # pantalla de logeo 
 
 esta pantalla por ahora solo requiere como 
-usuario:Prueba 
+usuario: Prueba 
+-cualquier otro usuario mostrara un mensaje en rojo que dice: Usuario Incorrecto
 
-cualquier otro usuario mostrara un error en rojo que dice: Usuario Incorrecto
+Si se presiona el Forget Password 
+ muestra un mensaje que dice en rojo funciona el boton 
+
+ una vez presionado el boton login muestra la pantalla preeliminar de lo que podra hacer la aplicacion
 
 <img width="503" height="897" alt="image" src="https://github.com/user-attachments/assets/033c4b04-1ed1-4113-93ef-e36086576a8f" />
