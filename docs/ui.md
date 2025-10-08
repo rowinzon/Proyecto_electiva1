@@ -20,4 +20,9 @@ La aplicación tendrá la siguientes pantallas
 
 # pantalla de logeo 
 
+esta pantalla por ahora solo requiere como 
+usuario:Prueba 
+
+cualquier otro usuario mostrara un error en rojo que dice: Usuario Incorrecto
+
 <img width="503" height="897" alt="image" src="https://github.com/user-attachments/assets/033c4b04-1ed1-4113-93ef-e36086576a8f" />
