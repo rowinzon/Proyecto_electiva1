@@ -1,15 +1,15 @@
-//package com.example.proyecto
-//
-//import androidx.room.Entity
-//import androidx.room.PrimaryKey
-//import androidx.room.Dao
-//import androidx.room.Insert
-//import androidx.room.Query
-//import androidx.room.Database
-//import androidx.room.RoomDatabase
-//import android.content.Context
-//import androidx.room.Room
-//import kotlinx.coroutines.*
+package com.example.proyecto
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import android.content.Context
+import androidx.room.Room
+import kotlinx.coroutines.*
 //
 //@Entity(tableName = "usuarios")   // nombre personalizado de la tabla
 //data class User(
