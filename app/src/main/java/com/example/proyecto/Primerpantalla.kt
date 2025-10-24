@@ -11,10 +11,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.compose.ui.platform.LocalContext
+
 @Composable
 fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
-    var userName by remember { mutableStateOf("") }
-    var passwordUser by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var userNameingresado by remember { mutableStateOf("") }
+    var passwordUseringresado by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     var loginMessage by remember { mutableStateOf("") }
     Row(
@@ -65,16 +73,16 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                 iconos_contexto(iconRes = R.drawable.username, label = "Username")
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = userName,
-                    onValueChange = { userName = it },
+                    value = userNameingresado,
+                    onValueChange = { userNameingresado = it },
                     label = { Text("Nombre de usuario") }
                 )
                 // Password
                 iconos_contexto(iconRes = R.drawable.password, label = "Password")
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = passwordUser,
-                    onValueChange = { passwordUser = it },
+                    value = passwordUseringresado,
+                    onValueChange = { passwordUseringresado = it },
                     label = { Text("Contraseña") }
                 )
                 // Recordarme + Forget password
@@ -103,13 +111,30 @@ fun PantallaPrincipal(onLoginSuccess: () -> Unit,onBack: () -> Unit) {
                     )
                 }
                 }
-                // Botón Login
+                // Botón
                 Button(
                     onClick = {
-                        if (userName == "Prueba") {
-                            onLoginSuccess()
-                        } else {
-                            loginMessage = "Usuario incorrecto"
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val db = getDatabase(context)
+                            val userDao = db.userDao()
+
+                            // Buscar el usuario por su nombre
+                            val usuarioEncontrado = userDao.getUserByUsuario(userNameingresado)
+
+                            withContext(Dispatchers.Main) {
+                                if (usuarioEncontrado != null) {
+                                    // Validar usuario y contraseña
+                                    if (usuarioEncontrado.password == passwordUseringresado) {
+                                        loginMessage = "Inicio de sesión exitoso"
+                                        onLoginSuccess()
+
+                                    } else {
+                                        loginMessage = "Contraseña o usuario incorrectos"
+                                    }
+                                } else {
+                                    loginMessage = "Usuario no encontrado"
+                                }
+                            }
                         }
                     }
                 ) {
