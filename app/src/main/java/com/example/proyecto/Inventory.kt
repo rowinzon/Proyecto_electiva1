@@ -25,8 +25,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 
+// ---------- HOME ----------
 @Composable
-fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome: () -> Unit){
+fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome: () -> Unit,
+              onNavigateTo: (String) -> Unit){
     TopBarButtons(onBack = onBack, onHome = onHome)
     var isSelected by remember { mutableStateOf(false) }
     Box(
@@ -50,7 +52,6 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
                         listOf(
                             "Crear nuevo usuario",
                             "Crear Elementos",
-                            "Eliminar Datos",
                             "Generar entrada",
                             "Generar salida"
                         )
@@ -61,13 +62,12 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
                     TextButton(
                         onClick = {
                             when (opcion) {
-                                "Stock" -> {  }
-                                "Settings" -> { }
-                                "Generar entrada" -> {  }
-                                "Generar salida" -> {  }
-                                "Crear Elementos" -> {  }
-                                "Eliminar Datos" -> {  }
-                                "Crear nuevo usuario" -> { }
+                                "Stock" -> { onNavigateTo ("Stock") }
+                                "Settings" -> { onNavigateTo ("settings") }
+                                "Generar entrada" -> { onNavigateTo ("Entrada") }
+                                "Generar salida" -> {onNavigateTo ("Salida")}
+                                "Crear Elementos" -> { onNavigateTo ("Elementos") }
+                                "Crear nuevo usuario" -> {onNavigateTo ("CrearNuevoUsuario")}
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -92,5 +92,5 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaInventoryPreview() {
-    Inventory("Administrador", 0, onBack = {}, onHome = {})
+    Inventory("Administrador", 0, onBack = {}, onHome = {},onNavigateTo = {})
 }

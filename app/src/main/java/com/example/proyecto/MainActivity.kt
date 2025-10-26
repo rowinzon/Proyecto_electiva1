@@ -41,17 +41,18 @@ class MainActivity : ComponentActivity() {
                                 pantallaActual = "inventory"
                             }
                         )
-
+// ---------- HOME ----------
                         "inventory" -> Inventory(
                             UsuarioLogeado = usuarioActual?.usuario ?: "",
                             Nivelacceso = usuarioActual?.nivelDePermiso ?: 2,
                             onBack = { pantallaActual = "login" },
-                            onHome = { pantallaActual = "login" }
+                            onHome = { pantallaActual = "inventory" },
+                            onNavigateTo = { destino -> pantallaActual = destino }
                         )
-
+// ---------- PAGINA SETTINGS ----------
                         "settings" -> AccionesConf(
                             onBack = { pantallaActual = "inventory" },
-                            onHome = { pantallaActual = "login" }
+                            onHome = { pantallaActual = "inventory" }
                         )
                     }
                 }
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-// ---------- HOME ----------
+// ---------- PAGINA INICIAL ----------
 @Composable
 fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
     val context = LocalContext.current

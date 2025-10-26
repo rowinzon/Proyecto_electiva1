@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 
-
+// ---------- PAGINA SETTINGS ----------
 @Composable
 fun AccionesConf(onBack: () -> Unit,onHome: () -> Unit) {
     TopBarButtons(onBack = onBack, onHome = onHome)

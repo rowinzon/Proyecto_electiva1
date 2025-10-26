@@ -20,15 +20,12 @@ data class User(
 )
 @Dao
 interface UserDao {
-
     // Insertar un nuevo usuario
     @Insert
     suspend fun insertUser(user: User)
-
     // Verificar si el usuario ya existe
     @Query("SELECT COUNT(*) FROM usuarios WHERE usuario = :usuarioIngresado")
     suspend fun userExists(usuarioIngresado: String): Int
-
     // Buscar un usuario por su nombre
     @Query("SELECT * FROM usuarios WHERE usuario = :usuarioIngresado LIMIT 1")
     suspend fun getUserByUsuario(usuarioIngresado: String): User?
@@ -55,10 +52,8 @@ fun crearUsuarioAdministrador(context: Context) {
         val usuarioAdmin = "Administrador"     // Nombre del usuario administrador
         val passwordAdmin = "12345"            // Contraseña por defecto
         val nivelAdmin = 0                     // 0 = Administrador
-
         // Verificar si el usuario administrador ya existe
         val existe = userDao.userExists(usuarioAdmin)
-
         if (existe == 0) {
             // Si no existe, lo insertamos
                 val nuevoUsuario = User(
