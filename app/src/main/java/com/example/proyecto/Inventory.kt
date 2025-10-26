@@ -26,7 +26,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 
 @Composable
-fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
+fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome: () -> Unit){
     TopBarButtons(onBack = onBack, onHome = onHome)
     var isSelected by remember { mutableStateOf(false) }
     Box(
@@ -44,22 +44,30 @@ fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                val opciones = listOf(
-                    "Stock",
-                    "Generar entrada",
-                    "Generar salida",
-                    "Crear Elementos",
-                    "Eliminar Datos"
-                )
+                val opciones = mutableListOf("Stock", "Settings")
+                when (Nivelacceso) {
+                    0 -> opciones.addAll(
+                        listOf(
+                            "Crear nuevo usuario",
+                            "Crear Elementos",
+                            "Eliminar Datos",
+                            "Generar entrada",
+                            "Generar salida"
+                        )
+                    )
+                    1 -> opciones.addAll(listOf("Generar entrada", "Generar salida"))
+                }
                 opciones.forEach { opcion ->
                     TextButton(
                         onClick = {
                             when (opcion) {
                                 "Stock" -> {  }
+                                "Settings" -> { }
                                 "Generar entrada" -> {  }
                                 "Generar salida" -> {  }
                                 "Crear Elementos" -> {  }
                                 "Eliminar Datos" -> {  }
+                                "Crear nuevo usuario" -> { }
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -84,5 +92,5 @@ fun Inventory(onBack:() -> Unit,onHome: () -> Unit){
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaInventoryPreview() {
-    Inventory(onBack = {}, onHome = {})
+    Inventory("Administrador", 0, onBack = {}, onHome = {})
 }
