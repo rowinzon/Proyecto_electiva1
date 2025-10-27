@@ -27,10 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
@@ -58,7 +54,7 @@ fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                iconos_contexto(iconRes = R.drawable.username, label = "Username")
+                iconos_contexto(iconRes = R.drawable.username, label = "New Username")
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = userNameNew,
@@ -72,36 +68,14 @@ fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
                     onValueChange = { userPasswordNew = it },
                     label = { Text("Contraseña") }
                 )
-                Text(
-                    text = "Nivel de permiso ",
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                val Permisos = listOf(
-                    "Administrador", "Normal", "Consultas"
-                )
-                Permisos.forEach { Permisos ->
-                    TextButton(
-                        onClick = {
-                            when (Permisos) {
-                                "Administrador" -> { userNivelNew = 0 }
-                                "Normal" -> { userNivelNew = 1 }
-                                "Consultas" -> { userNivelNew = 2 }
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = Permisos,
-                            fontSize = 20.sp,
-                            color = Color.Black,
-                            textAlign = TextAlign.Start,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                DropdownSelector(
+                    label = "Nivel de permiso",
+                    options = listOf("Administrador", "Normal", "Consultas",),
+                    selectedIndex = userNivelNew,
+                    onOptionSelected = { index ->
+                        userNivelNew = index
                     }
-                }
+                )
                 Button(
                     onClick = {
                         crearNuevoUsuario(userNameNew, userPasswordNew,
