@@ -54,6 +54,11 @@ class MainActivity : ComponentActivity() {
                             onBack = { pantallaActual = "inventory" },
                             onHome = { pantallaActual = "inventory" }
                         )
+// ---------- PAGINA SETTINGS ----------
+                        "CrearNuevoUsuario" -> CreateNewUser(
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
                     }
                 }
             }
@@ -83,8 +88,6 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
                 color = Color.Black
             )
         }
-        //imagen uan
-
         // Card con formulario
         Card(
             modifier = Modifier

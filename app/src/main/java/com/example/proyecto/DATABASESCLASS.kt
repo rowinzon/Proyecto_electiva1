@@ -1,5 +1,6 @@
 package com.example.proyecto
 
+import android.R
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Dao
@@ -65,6 +66,26 @@ fun crearUsuarioAdministrador(context: Context) {
             println("Usuario Administrador creado correctamente.")
         } else {
             println("El usuario Administrador ya existe. No se creó otro.")
+        }
+    }
+}
+fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Context, onResult: (String) -> Unit ) {
+    val db = getDatabase(context)
+    val userDao = db.userDao()
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val existe = userDao.userExists(nombre)
+        if (existe == 0) {
+            userDao.insertUser(
+                User(
+                    usuario = nombre,
+                    password = password,
+                    nivelDePermiso = nivel
+                )
+            )
+            onResult("Usuario $nombre creado correctamente.")
+        } else {
+            onResult("El usuario $nombre ya existe.")
         }
     }
 }
