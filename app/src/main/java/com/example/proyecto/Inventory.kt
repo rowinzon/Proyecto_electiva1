@@ -51,6 +51,7 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
                     0 -> opciones.addAll(
                         listOf(
                             "Crear nuevo usuario",
+                            "Eliminar Usuario",
                             "Crear Elementos",
                             "Generar entrada",
                             "Generar salida"
@@ -68,6 +69,7 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
                                 "Generar salida" -> {onNavigateTo ("Salida")}
                                 "Crear Elementos" -> { onNavigateTo ("Elementos") }
                                 "Crear nuevo usuario" -> {onNavigateTo ("CrearNuevoUsuario")}
+                                "Eliminar Usuario" -> {onNavigateTo ("EliminarUsuario")}
                             }
                         },
                         modifier = Modifier.fillMaxWidth()

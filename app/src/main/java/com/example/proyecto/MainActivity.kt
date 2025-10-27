@@ -54,8 +54,13 @@ class MainActivity : ComponentActivity() {
                             onBack = { pantallaActual = "inventory" },
                             onHome = { pantallaActual = "inventory" }
                         )
-// ---------- PAGINA SETTINGS ----------
+// ---------- PAGINA CrearNuevoUsuario ----------
                         "CrearNuevoUsuario" -> CreateNewUser(
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
+// ---------- PAGINA CrearNuevoUsuario ----------
+                        "EliminarUsuario" -> DeleteUser(
                             onBack = { pantallaActual = "inventory" },
                             onHome = { pantallaActual = "inventory" }
                         )

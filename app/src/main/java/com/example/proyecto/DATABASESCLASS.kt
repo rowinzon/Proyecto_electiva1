@@ -11,6 +11,7 @@ import androidx.room.RoomDatabase
 import android.content.Context
 import androidx.room.Room
 import kotlinx.coroutines.*
+import androidx.room.Delete
 @Entity(tableName = "usuarios")
 data class User(
     @PrimaryKey(autoGenerate = true)
@@ -21,6 +22,9 @@ data class User(
 )
 @Dao
 interface UserDao {
+    //eliminar usuario
+    @Delete
+    suspend fun DeletetUser(user: User)
     // Insertar un nuevo usuario
     @Insert
     suspend fun insertUser(user: User)
@@ -30,6 +34,9 @@ interface UserDao {
     // Buscar un usuario por su nombre
     @Query("SELECT * FROM usuarios WHERE usuario = :usuarioIngresado LIMIT 1")
     suspend fun getUserByUsuario(usuarioIngresado: String): User?
+    //buscar todos los usuarios creados
+    @Query("SELECT usuario FROM usuarios ")
+    suspend fun GetAllusers ():  List<String>
 }
 @Database(entities = [User::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
@@ -86,6 +93,24 @@ fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Con
             onResult("Usuario $nombre creado correctamente.")
         } else {
             onResult("El usuario $nombre ya existe.")
+        }
+    }
+}
+fun eliminarUsuario(nombre: String, context: Context, onResult: (String) -> Unit) {
+    val db = getDatabase(context)
+    val userDao = db.userDao()
+
+    CoroutineScope(Dispatchers.IO).launch { // Corutina para ejecutar suspend
+        val user = userDao.getUserByUsuario(nombre) // suspend
+        if (user != null) {
+            userDao.DeletetUser(user) // suspend
+            withContext(Dispatchers.Main) {
+                onResult("Usuario $nombre eliminado correctamente.")
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                onResult("El usuario $nombre no existe.")
+            }
         }
     }
 }

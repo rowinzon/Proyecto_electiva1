@@ -28,6 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 
+import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.foundation.layout.*
+import kotlinx.coroutines.*
+
 @Composable
 fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
     val context = LocalContext.current
@@ -96,9 +101,77 @@ fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
         }
     }
 }
+@Composable
+fun DeleteUser(onBack: () -> Unit, onHome: () -> Unit) {
+    val context = LocalContext.current
+    var userToDelete by remember { mutableStateOf("") }
+    var loginMessage by remember { mutableStateOf("") }
+    val listaUsuarios = remember { mutableStateListOf<String>() }
+    val db = getDatabase(context)
+    val userDao = db.userDao()
+    TopBarButtons(onBack = onBack, onHome = onHome)
+
+    // Cargar usuarios desde la DB
+    LaunchedEffect(Unit) {
+        val db = getDatabase(context)
+        val users = db.userDao().GetAllusers()
+        listaUsuarios.clear()
+        listaUsuarios.addAll(users)
+    }
+
+    Box(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
+        ,contentAlignment = Alignment.Center) {
+        Column {
+            DropdownSelector(
+                label = "Listado de Usuarios",
+                options = listaUsuarios,
+                selectedIndex = 0,
+                onOptionSelected = { index ->
+                    userToDelete = listaUsuarios[index]
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                // Eliminar usuario en background
+                val db = getDatabase(context)
+                val userDao = db.userDao()
+                CoroutineScope(Dispatchers.IO).launch {
+                    val user = userDao.getUserByUsuario(userToDelete)
+                    val mensaje = if (user != null) {
+                        userDao.DeletetUser(user)
+                        "Usuario $userToDelete eliminado correctamente."
+                    } else {
+                        "El usuario $userToDelete no existe."
+                    }
+                    withContext(Dispatchers.Main) {
+                        loginMessage = mensaje
+                        // Actualizar lista
+                        val updated = userDao.GetAllusers()
+                        listaUsuarios.clear()
+                        listaUsuarios.addAll(updated)
+                    }
+                }
+            }) {
+                Text("Eliminar Usuario")
+            }
+
+            if (loginMessage.isNotEmpty()) {
+                Text(
+                    text = loginMessage,
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
-    CreateNewUser(onBack = {}, onHome = {})
+    //CreateNewUser(onBack = {}, onHome = {})
+    DeleteUser(onBack = {}, onHome = {})
 }
