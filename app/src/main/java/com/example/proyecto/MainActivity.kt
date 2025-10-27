@@ -64,6 +64,17 @@ class MainActivity : ComponentActivity() {
                             onBack = { pantallaActual = "inventory" },
                             onHome = { pantallaActual = "inventory" }
                         )
+// ---------- PAGINA para crear elementos ----------
+                        "Elementos" -> Elementos(
+                            onNavigateTo = { destino -> pantallaActual = destino },
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
+// ---------- PAGINA crear grupo ----------
+                        "CreateGrupo" -> CreateGrupo(
+                            onBack = { pantallaActual = "Elementos" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
                     }
                 }
             }

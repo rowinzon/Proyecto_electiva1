@@ -168,10 +168,140 @@ fun DeleteUser(onBack: () -> Unit, onHome: () -> Unit) {
     }
 }
 
+@Composable
+fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> Unit){
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    var isSelected by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier.padding(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ){
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                val opciones = listOf(
+                    "Crear Grupo",
+                    "Crear Subgrupo",
+                    "Crear Elementos"
+                )
+                opciones.forEach { opcion ->
+                    TextButton(
+                        onClick = {
+                            when (opcion) {
+                                "Crear Grupo" -> onNavigateTo("CreateGrupo")
+                                "Crear Subgrupo" -> { /* navegar a Subgrupo */ }
+                                "Crear Elementos" -> { /* navegar a Elementos */ }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = opcion,
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+        }
+        LogoUan(
+            modifier = Modifier.size(240.dp).align(Alignment.BottomCenter).padding(16.dp)
+        )
+    }
+}
+
+@Composable
+fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
+    var GrupoNametocreate by remember { mutableStateOf("") }
+    var GrupoCodigoNumtocreate by remember { mutableStateOf("") }
+    var GrupoCodigotocreate by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight(),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Nombre Grupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp)
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoNametocreate,
+                    onValueChange = { GrupoNametocreate = it },
+                    label = { Text("Nombre Grupo a crear") }
+                )
+                Text(
+                    text = "Codigo Numerico del grupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp)
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoCodigoNumtocreate,
+                    onValueChange = { GrupoCodigoNumtocreate = it },
+                    label = { Text("Codigo Numerico del grupo a crear") }
+                )
+                Text(
+                    text = "Codigo Grupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoCodigotocreate,
+                    onValueChange = { GrupoCodigotocreate = it },
+                    label = { Text("Codigo Grupo a crear") }
+                )
+                Button(
+                    onClick = {
+                    }
+                ){
+                    Text("Crear")
+                }
+                if (Message.isNotEmpty()) {
+                    Text(
+                        text = Message,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
     //CreateNewUser(onBack = {}, onHome = {})
-    DeleteUser(onBack = {}, onHome = {})
+    //DeleteUser(onBack = {}, onHome = {})
+    CreateGrupo(onBack = {}, onHome = {})
+    //Elementos(onBack = {}, onHome = {},onNavigateTo = {})
 }
