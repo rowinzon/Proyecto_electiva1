@@ -12,6 +12,8 @@ import android.content.Context
 import androidx.room.Room
 import kotlinx.coroutines.*
 import androidx.room.Delete
+import androidx.room.ForeignKey
+
 @Entity(tableName = "usuarios")
 data class User(
     @PrimaryKey(autoGenerate = true)
@@ -20,6 +22,146 @@ data class User(
     val password: String,          // Columna PASSWORD
     val nivelDePermiso: Int        // 0 = admin, 1 = usuario normal, 2 = solo consulta
 )
+@Entity(tableName = "grupo_productos")
+data class GrupoProducto(
+    @PrimaryKey(autoGenerate = true) val idGrupo: Int = 0,
+    val nombreGrupo: String,
+    val codigoNum: Int,
+    val codigo: String
+)
+
+@Entity(
+    tableName = "subgrupo_productos",
+    foreignKeys = [ForeignKey(
+        entity = GrupoProducto::class,
+        parentColumns = ["idGrupo"],
+        childColumns = ["idGrupo"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class SubgrupoProducto(
+    @PrimaryKey(autoGenerate = true) val idSubgrupo: Int = 0,
+    val idGrupo: Int,
+    val nombreSubgrupo: String,
+    val codigoNum: Int,
+    val codigo: String
+)
+
+@Entity(
+    tableName = "productos",
+    foreignKeys = [
+        ForeignKey(
+            entity = GrupoProducto::class,
+            parentColumns = ["idGrupo"],
+            childColumns = ["idGrupo"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = SubgrupoProducto::class,
+            parentColumns = ["idSubgrupo"],
+            childColumns = ["idSubgrupo"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class Producto(
+    @PrimaryKey(autoGenerate = true) val idProducto: Int = 0,
+    val idGrupo: Int,
+    val idSubgrupo: Int,
+    val nombreProducto: String,
+    val numeroProducto: Int,
+    val marcaModelosCompatibles: String,
+    val ubicacionBodega: String,
+    val observaciones: String? = null
+)
+
+@Entity(
+    tableName = "existencias",
+    foreignKeys = [ForeignKey(
+        entity = Producto::class,
+        parentColumns = ["idProducto"],
+        childColumns = ["idProducto"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class Existencia(
+    @PrimaryKey val idProducto: Int,
+    val nombre: String,
+    val existencia: Int = 0,
+    val valor: Double = 0.0
+)
+
+@Entity(
+    tableName = "historial_inventario",
+    foreignKeys = [ForeignKey(
+        entity = Producto::class,
+        parentColumns = ["idProducto"],
+        childColumns = ["idProducto"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class HistorialInventario(
+    @PrimaryKey(autoGenerate = true) val idHistorial: Int = 0,
+    val fecha: Long, // Usar timestamp en milisegundos
+    val idProducto: Int,
+    val cantidad: Int,
+    val entradas: Int = 0,
+    val salidas: Int = 0,
+    val valor: Double
+)
+
+@Entity(
+    tableName = "salidas",
+    foreignKeys = [ForeignKey(
+        entity = Producto::class,
+        parentColumns = ["idProducto"],
+        childColumns = ["idProducto"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class Salida(
+    @PrimaryKey(autoGenerate = true) val idSalida: Int = 0,
+    val fecha: Long,
+    val idProducto: Int,
+    val cantidad: Int,
+    val responsable: String,
+    val cliente: String,
+    val observaciones: String? = null
+)
+
+@Entity(tableName = "entradas")
+data class Entrada(
+    @PrimaryKey(autoGenerate = true) val idEntrada: Int = 0,
+    val fecha: Long,
+    val proveedor: String,
+    val observaciones: String? = null
+)
+
+@Entity(
+    tableName = "detalle_entradas",
+    foreignKeys = [
+        ForeignKey(
+            entity = Entrada::class,
+            parentColumns = ["idEntrada"],
+            childColumns = ["idEntrada"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Producto::class,
+            parentColumns = ["idProducto"],
+            childColumns = ["idProducto"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class DetalleEntrada(
+    @PrimaryKey(autoGenerate = true) val idDetalle: Int = 0,
+    val idEntrada: Int,
+    val idProducto: Int,
+    val cantidad: Int,
+    val valorEntrada: Double
+)
+
 @Dao
 interface UserDao {
     //eliminar usuario
@@ -96,21 +238,4 @@ fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Con
         }
     }
 }
-fun eliminarUsuario(nombre: String, context: Context, onResult: (String) -> Unit) {
-    val db = getDatabase(context)
-    val userDao = db.userDao()
 
-    CoroutineScope(Dispatchers.IO).launch { // Corutina para ejecutar suspend
-        val user = userDao.getUserByUsuario(nombre) // suspend
-        if (user != null) {
-            userDao.DeletetUser(user) // suspend
-            withContext(Dispatchers.Main) {
-                onResult("Usuario $nombre eliminado correctamente.")
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                onResult("El usuario $nombre no existe.")
-            }
-        }
-    }
-}
