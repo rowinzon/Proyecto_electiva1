@@ -75,6 +75,11 @@ class MainActivity : ComponentActivity() {
                             onBack = { pantallaActual = "Elementos" },
                             onHome = { pantallaActual = "inventory" }
                         )
+// ---------- PAGINA Create Subgrupo ----------
+                                "CreateSubgrupo" -> CreateSubgrupo(
+                        onBack = { pantallaActual = "Elementos" },
+                        onHome = { pantallaActual = "inventory" }
+                    )
                     }
                 }
             }
