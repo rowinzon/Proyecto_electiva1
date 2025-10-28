@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
+import com.example.proyecto.LogoUan
 import kotlinx.coroutines.*
 
 @Composable
@@ -176,6 +177,17 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp) // espacio entre título y card
+        ) {
+            Text(
+                text = "Creación Elementos",
+                fontSize = 32.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+            )
         Card(
             modifier = Modifier.padding(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray),
@@ -196,7 +208,7 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
                         onClick = {
                             when (opcion) {
                                 "Crear Grupo" -> onNavigateTo("CreateGrupo")
-                                "Crear Subgrupo" -> { /* navegar a Subgrupo */ }
+                                "Crear Subgrupo" -> { onNavigateTo("CreateSubgrupo") }
                                 "Crear Elementos" -> { /* navegar a Elementos */ }
                             }
                         },
@@ -213,9 +225,9 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
                 }
             }
         }
+        }
         LogoUan(
-            modifier = Modifier.size(240.dp).align(Alignment.BottomCenter).padding(16.dp)
-        )
+            modifier = Modifier.size(240.dp).align(Alignment.BottomCenter).padding(16.dp))
     }
 }
 
@@ -296,12 +308,103 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
     }
 }
 
+@Composable
+fun CreateSubgrupo (onBack: () -> Unit, onHome: () -> Unit){
+    var IDGrupo by remember { mutableStateOf("") }
+    var SubGrupoNametocreate by remember { mutableStateOf("") }
+    var SubGrupoCodigoNumtocreate by remember { mutableStateOf("") }
+    var SubGrupoCodigotocreate by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp)
+        ) {
+            Card(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth(0.9f)
+                    .wrapContentHeight(),
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Grupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    //lista plegable de grupo
+                    Text(
+                        text = "Nombre SubGrupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = SubGrupoNametocreate,
+                        onValueChange = { SubGrupoNametocreate = it },
+                        label = { Text("Nombre SubGrupo a crear") }
+                    )
+                    Text(
+                        text = "Codigo Numerico del Subgrupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = SubGrupoCodigoNumtocreate,
+                        onValueChange = { SubGrupoCodigoNumtocreate = it },
+                        label = { Text("Codigo Num del Subgrupo a crear") }
+                    )
+                    Text(
+                        text = "Codigo SubGrupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = SubGrupoCodigotocreate,
+                        onValueChange = { SubGrupoCodigotocreate = it },
+                        label = { Text("Codigo SubGrupo a crear") }
+                    )
+                    Button(
+                        onClick = {
+                        }
+                    ){
+                        Text("Crear")
+                    }
+                    if (Message.isNotEmpty()) {
+                        Text(
+                            text = Message,
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+        }
+        LogoUan(modifier = Modifier.size(240.dp).padding(bottom = 16.dp))
+    }
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
     //CreateNewUser(onBack = {}, onHome = {})
     //DeleteUser(onBack = {}, onHome = {})
-    CreateGrupo(onBack = {}, onHome = {})
+    //CreateGrupo(onBack = {}, onHome = {})
     //Elementos(onBack = {}, onHome = {},onNavigateTo = {})
+    CreateSubgrupo (onBack = {}, onHome = {})
 }
