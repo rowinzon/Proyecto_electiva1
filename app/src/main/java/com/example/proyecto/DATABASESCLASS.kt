@@ -70,7 +70,6 @@ data class Producto(
     val idSubgrupo: Int,
     val nombreProducto: String,
     val numeroProducto: Int,
-    val marcaModelosCompatibles: String,
     val ubicacionBodega: String,
     val observaciones: String? = null
 )
