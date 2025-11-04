@@ -197,7 +197,7 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
                             when (opcion) {
                                 "Crear Grupo" -> onNavigateTo("CreateGrupo")
                                 "Crear Subgrupo" -> { /* navegar a Subgrupo */ }
-                                "Crear Elementos" -> { /* navegar a Elementos */ }
+                                "Crear Elementos" -> { onNavigateTo("CreateElement") }
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -293,15 +293,89 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
                 }
             }
         }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
     }
 }
 
+@Composable
+fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
+    var GrupoName by remember { mutableStateOf("") }
+    var SubGrupoName by remember { mutableStateOf("") }
+    var NameProducto by remember { mutableStateOf("") }
+    var UbicacionAlmacen by remember { mutableStateOf("") }
+    var Observaciones by remember { mutableStateOf("") }
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight(),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Text(
+                text = "Seleccione Grupo",
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp),
+            )
+            //lista deplegable de grupos  GrupoName
+            Text(
+                text = "Seleccione SubGrupo",
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp),
+            )
+            //lista deplegable de Subgrupos  SubGrupoName
+
+            Text(
+                text = "Nombre Del Producto",
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp),
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = NameProducto,
+                onValueChange = { NameProducto = it },
+                label = { Text("Nombre Del Producto") }
+            )
+            Text(
+                text = "Ubicacion en el Almacen",
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp),
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = UbicacionAlmacen,
+                onValueChange = { UbicacionAlmacen = it },
+                label = { Text("Ubicacion") }
+            )
+            Text(
+                text = "Observaciones",
+                color = Color.Black,
+                modifier = Modifier.padding(8.dp),
+            )
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = Observaciones,
+                onValueChange = { Observaciones = it },
+                label = { Text("Observaciones") }
+            )
+        }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
+    }
+}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
     //CreateNewUser(onBack = {}, onHome = {})
     //DeleteUser(onBack = {}, onHome = {})
-    CreateGrupo(onBack = {}, onHome = {})
+    //CreateGrupo(onBack = {}, onHome = {})
     //Elementos(onBack = {}, onHome = {},onNavigateTo = {})
+    CreateElement(onBack = {}, onHome = {})
 }
