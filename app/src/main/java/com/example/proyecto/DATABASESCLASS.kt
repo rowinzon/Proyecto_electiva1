@@ -22,7 +22,7 @@ data class User(
     val password: String,          // Columna PASSWORD
     val nivelDePermiso: Int        // 0 = admin, 1 = usuario normal, 2 = solo consulta
 )
-@Entity(tableName = "grupo_productos")
+@Entity(tableName = "GrupoProducto")
 data class GrupoProducto(
     @PrimaryKey(autoGenerate = true) val idGrupo: Int = 0,
     val nombreGrupo: String,
@@ -30,15 +30,7 @@ data class GrupoProducto(
     val codigo: String
 )
 
-@Entity(
-    tableName = "subgrupo_productos",
-    foreignKeys = [ForeignKey(
-        entity = GrupoProducto::class,
-        parentColumns = ["idGrupo"],
-        childColumns = ["idGrupo"],
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "SubgrupoProducto")
 data class SubgrupoProducto(
     @PrimaryKey(autoGenerate = true) val idSubgrupo: Int = 0,
     val idGrupo: Int,
@@ -47,23 +39,7 @@ data class SubgrupoProducto(
     val codigo: String
 )
 
-@Entity(
-    tableName = "productos",
-    foreignKeys = [
-        ForeignKey(
-            entity = GrupoProducto::class,
-            parentColumns = ["idGrupo"],
-            childColumns = ["idGrupo"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = SubgrupoProducto::class,
-            parentColumns = ["idSubgrupo"],
-            childColumns = ["idSubgrupo"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
+@Entity(tableName = "Producto")
 data class Producto(
     @PrimaryKey(autoGenerate = true) val idProducto: Int = 0,
     val idGrupo: Int,
@@ -74,15 +50,7 @@ data class Producto(
     val observaciones: String? = null
 )
 
-@Entity(
-    tableName = "existencias",
-    foreignKeys = [ForeignKey(
-        entity = Producto::class,
-        parentColumns = ["idProducto"],
-        childColumns = ["idProducto"],
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "Existencia")
 data class Existencia(
     @PrimaryKey val idProducto: Int,
     val nombre: String,
@@ -90,15 +58,7 @@ data class Existencia(
     val valor: Double = 0.0
 )
 
-@Entity(
-    tableName = "historial_inventario",
-    foreignKeys = [ForeignKey(
-        entity = Producto::class,
-        parentColumns = ["idProducto"],
-        childColumns = ["idProducto"],
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "HistorialInventario")
 data class HistorialInventario(
     @PrimaryKey(autoGenerate = true) val idHistorial: Int = 0,
     val fecha: Long, // Usar timestamp en milisegundos
@@ -109,15 +69,7 @@ data class HistorialInventario(
     val valor: Double
 )
 
-@Entity(
-    tableName = "salidas",
-    foreignKeys = [ForeignKey(
-        entity = Producto::class,
-        parentColumns = ["idProducto"],
-        childColumns = ["idProducto"],
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "Salida")
 data class Salida(
     @PrimaryKey(autoGenerate = true) val idSalida: Int = 0,
     val fecha: Long,
@@ -136,23 +88,7 @@ data class Entrada(
     val observaciones: String? = null
 )
 
-@Entity(
-    tableName = "detalle_entradas",
-    foreignKeys = [
-        ForeignKey(
-            entity = Entrada::class,
-            parentColumns = ["idEntrada"],
-            childColumns = ["idEntrada"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = Producto::class,
-            parentColumns = ["idProducto"],
-            childColumns = ["idProducto"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
+@Entity(tableName = "DetalleEntrada")
 data class DetalleEntrada(
     @PrimaryKey(autoGenerate = true) val idDetalle: Int = 0,
     val idEntrada: Int,
@@ -179,10 +115,24 @@ interface UserDao {
     @Query("SELECT usuario FROM usuarios ")
     suspend fun GetAllusers ():  List<String>
 }
-@Database(entities = [User::class], version = 1)
+@Database(
+    entities = [
+        User::class,
+        GrupoProducto::class,
+        SubgrupoProducto::class,
+        Producto::class,
+        Existencia::class,
+        HistorialInventario::class,
+        Salida::class,
+        Entrada::class,
+        DetalleEntrada::class
+    ],
+    version = 2
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 }
+
 
 // Función para obtener una instancia de la base de datos
 fun getDatabase(context: Context): AppDatabase {
@@ -190,8 +140,11 @@ fun getDatabase(context: Context): AppDatabase {
         context.applicationContext,
         AppDatabase::class.java,
         "INVENTORYAPPDB"
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .build()
 }
+
 //crear el usuario administrador
 fun crearUsuarioAdministrador(context: Context) {
     val db = getDatabase(context)              // Obtiene la base de datos
