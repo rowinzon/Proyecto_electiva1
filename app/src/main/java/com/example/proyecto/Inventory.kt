@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-
 // ---------- HOME ----------
 @Composable
 fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome: () -> Unit,
@@ -65,8 +64,8 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
                             when (opcion) {
                                 "Stock" -> { onNavigateTo ("Stock") }
                                 "Settings" -> { onNavigateTo ("settings") }
-                                "Generar entrada" -> { onNavigateTo ("Entrada") }
-                                "Generar salida" -> {onNavigateTo ("Salida")}
+                                "Generar entrada" -> { onNavigateTo ("CreateEntrada") }
+                                "Generar salida" -> {onNavigateTo ("CreateSalida")}
                                 "Crear Elementos" -> { onNavigateTo ("Elementos") }
                                 "Crear nuevo usuario" -> {onNavigateTo ("CrearNuevoUsuario")}
                                 "Eliminar Usuario" -> {onNavigateTo ("EliminarUsuario")}
@@ -88,9 +87,7 @@ fun Inventory(UsuarioLogeado: String,Nivelacceso: Int ,onBack:() -> Unit,onHome:
         LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
             .padding(16.dp))
     }
-
 }
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaInventoryPreview() {
