@@ -1,6 +1,5 @@
 package com.example.proyecto
 
-import android.R
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Dao
@@ -12,7 +11,6 @@ import android.content.Context
 import androidx.room.Room
 import kotlinx.coroutines.*
 import androidx.room.Delete
-import androidx.room.ForeignKey
 
 @Entity(tableName = "usuarios")
 data class User(
@@ -132,8 +130,6 @@ interface UserDao {
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 }
-
-
 // Función para obtener una instancia de la base de datos
 fun getDatabase(context: Context): AppDatabase {
     return Room.databaseBuilder(
@@ -188,5 +184,8 @@ fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Con
             onResult("El usuario $nombre ya existe.")
         }
     }
+}
+fun CrearGrupo(){
+
 }
 

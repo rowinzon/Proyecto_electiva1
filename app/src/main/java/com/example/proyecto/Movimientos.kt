@@ -27,12 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.runtime.*
-import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import kotlinx.coroutines.*
-
 @Composable
 fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
     val context = LocalContext.current
@@ -167,7 +164,6 @@ fun DeleteUser(onBack: () -> Unit, onHome: () -> Unit) {
         }
     }
 }
-
 @Composable
 fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> Unit){
     TopBarButtons(onBack = onBack, onHome = onHome)
@@ -195,8 +191,8 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
                     TextButton(
                         onClick = {
                             when (opcion) {
-                                "Crear Grupo" -> onNavigateTo("CreateGrupo")
-                                "Crear Subgrupo" -> { /* navegar a Subgrupo */ }
+                                "Crear Grupo" -> { onNavigateTo("CreateGrupo")}
+                                "Crear Subgrupo" -> { onNavigateTo("CreateSubgrupo") }
                                 "Crear Elementos" -> { onNavigateTo("CreateElement") }
                             }
                         },
@@ -218,7 +214,6 @@ fun Elementos(onBack: () -> Unit, onHome: () -> Unit,onNavigateTo: (String) -> U
         )
     }
 }
-
 @Composable
 fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
     var GrupoNametocreate by remember { mutableStateOf("") }
@@ -297,14 +292,12 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
             .padding(16.dp))
     }
 }
-
 @Composable
-fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
-    var GrupoName by remember { mutableStateOf("") }
-    var SubGrupoName by remember { mutableStateOf("") }
-    var NameProducto by remember { mutableStateOf("") }
-    var UbicacionAlmacen by remember { mutableStateOf("") }
-    var Observaciones by remember { mutableStateOf("") }
+fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
+    var GrupoNametocreate by remember { mutableStateOf("") }
+    var GrupoCodigoNumtocreate by remember { mutableStateOf("") }
+    var GrupoCodigotocreate by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
     TopBarButtons(onBack = onBack, onHome = onHome)
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
@@ -318,64 +311,358 @@ fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
             colors = CardDefaults.cardColors(containerColor = Color.LightGray),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
-            Text(
-                text = "Seleccione Grupo",
-                color = Color.Black,
-                modifier = Modifier.padding(8.dp),
-            )
-            //lista deplegable de grupos  GrupoName
-            Text(
-                text = "Seleccione SubGrupo",
-                color = Color.Black,
-                modifier = Modifier.padding(8.dp),
-            )
-            //lista deplegable de Subgrupos  SubGrupoName
-
-            Text(
-                text = "Nombre Del Producto",
-                color = Color.Black,
-                modifier = Modifier.padding(8.dp),
-            )
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = NameProducto,
-                onValueChange = { NameProducto = it },
-                label = { Text("Nombre Del Producto") }
-            )
-            Text(
-                text = "Ubicacion en el Almacen",
-                color = Color.Black,
-                modifier = Modifier.padding(8.dp),
-            )
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = UbicacionAlmacen,
-                onValueChange = { UbicacionAlmacen = it },
-                label = { Text("Ubicacion") }
-            )
-            Text(
-                text = "Observaciones",
-                color = Color.Black,
-                modifier = Modifier.padding(8.dp),
-            )
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = Observaciones,
-                onValueChange = { Observaciones = it },
-                label = { Text("Observaciones") }
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Gupo al que pertenecera",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp)
+                )
+                //lista pegable de los grupos creados
+                Text(
+                    text = "Nombre SubGrupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp)
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoNametocreate,
+                    onValueChange = { GrupoNametocreate = it },
+                    label = { Text("Nombre SubGrupo a crear") }
+                )
+                Text(
+                    text = "Codigo Numerico del Subgrupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp)
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoCodigoNumtocreate,
+                    onValueChange = { GrupoCodigoNumtocreate = it },
+                    label = { Text("Codigo Numerico del Subgrupo") }
+                )
+                Text(
+                    text = "Codigo SubGrupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = GrupoCodigotocreate,
+                    onValueChange = { GrupoCodigotocreate = it },
+                    label = { Text("Codigo SubGrupo a crear") }
+                )
+                Button(
+                    onClick = {
+                    }
+                ){
+                    Text("Crear")
+                }
+                if (Message.isNotEmpty()) {
+                    Text(
+                        text = Message,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
         LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
             .padding(16.dp))
     }
 }
+@Composable
+fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
+    var GrupoName by remember { mutableStateOf("") }
+    var SubGrupoName by remember { mutableStateOf("") }
+    var NameProducto by remember { mutableStateOf("") }
+    var UbicacionAlmacen by remember { mutableStateOf("") }
+    var Observaciones by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight(),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Seleccione Grupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                //lista deplegable de grupos  GrupoName
+                Text(
+                    text = "Seleccione SubGrupo",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                //lista deplegable de Subgrupos  SubGrupoName
 
+                Text(
+                    text = "Nombre Del Producto",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = NameProducto,
+                    onValueChange = { NameProducto = it },
+                    label = { Text("Nombre Del Producto") }
+                )
+                Text(
+                    text = "Ubicacion en el Almacen",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = UbicacionAlmacen,
+                    onValueChange = { UbicacionAlmacen = it },
+                    label = { Text("Ubicacion") }
+                )
+                Text(
+                    text = "Observaciones",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = Observaciones,
+                    onValueChange = { Observaciones = it },
+                    label = { Text("Observaciones") }
+                )
+                Button(
+                    onClick = {
+                    }
+                ){
+                    Text("Crear")
+                }
+                if (Message.isNotEmpty()) {
+                    Text(
+                        text = Message,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
+    }
+}
+@Composable
+fun CreateEntrada(onBack: () -> Unit, onHome: () -> Unit){
+    var CantidadEntrante by remember { mutableStateOf("") }
+    var Observaciones by remember { mutableStateOf("") }
+    var Proveedor by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
+    TopBarButtons(onBack = onBack, onHome = onHome)
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth(0.9f)
+                .wrapContentHeight(),
+            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Seleccione el elemento",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                //lista pegable de elementos
+                Text(
+                    text = "Cantidad",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = CantidadEntrante,
+                    onValueChange = { CantidadEntrante = it },
+                    label = { Text("Cantidad que va a ingresar") }
+                )
+                Text(
+                    text = "Proveedor",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = Proveedor,
+                    onValueChange = { Proveedor = it },
+                    label = { Text("Proveedor") }
+                )
+                Text(
+                    text = "Observaciones",
+                    color = Color.Black,
+                    modifier = Modifier.padding(8.dp),
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = Observaciones,
+                    onValueChange = { Observaciones = it },
+                    label = { Text("Observaciones") }
+                )
+                Button(
+                    onClick = {
+                    }
+                ){
+                    Text("Crear")
+                }
+                if (Message.isNotEmpty()) {
+                    Text(
+                        text = Message,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
+            .padding(16.dp))
+    }
+}
+@Composable
+fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
+    var CantidadSaliente by remember { mutableStateOf("") }
+    var Observaciones by remember { mutableStateOf("") }
+    var Entrego by remember { mutableStateOf("") }
+    var Cliente by remember { mutableStateOf("") }
+    var Message by remember { mutableStateOf("") }
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TopBarButtons(onBack = onBack, onHome = onHome)
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .wrapContentHeight(),
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Seleccione el elemento",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    //lista pegable de elementos
+                    Text(
+                        text = "Cantidad",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = CantidadSaliente,
+                        onValueChange = { CantidadSaliente = it },
+                        label = { Text("Cantidad que va a Salir") }
+                    )
+                    Text(
+                        text = "Entrega",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = Entrego,
+                        onValueChange = { Entrego = it },
+                        label = { Text("Quien Entrega") }
+                    )
+                    Text(
+                        text = "Cliente",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = Cliente,
+                        onValueChange = { Cliente = it },
+                        label = { Text("Quien Recibe") }
+                    )
+                    Text(
+                        text = "Observaciones",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = Observaciones,
+                        onValueChange = { Observaciones = it },
+                        label = { Text("Observaciones") }
+                    )
+                    Button(
+                        onClick = {
+                        }
+                    ) {
+                        Text("Crear")
+                    }
+                    if (Message.isNotEmpty()) {
+                        Text(
+                            text = Message,
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+            LogoUan(modifier = Modifier.size(240.dp).padding(16.dp))
+        }
+    }
+}
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
     //CreateNewUser(onBack = {}, onHome = {})
     //DeleteUser(onBack = {}, onHome = {})
-    //CreateGrupo(onBack = {}, onHome = {})
     //Elementos(onBack = {}, onHome = {},onNavigateTo = {})
+    //CreateGrupo(onBack = {}, onHome = {})
+    //CreateSubgrupo(onBack = {}, onHome = {})
     CreateElement(onBack = {}, onHome = {})
+    //CreateEntrada(onBack = {}, onHome = {})
+    //CreateSalida (onBack = {}, onHome = {})
 }
