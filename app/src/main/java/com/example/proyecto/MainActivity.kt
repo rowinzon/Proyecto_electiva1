@@ -20,15 +20,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crearUsuarioAdministrador(this)
         enableEdgeToEdge()
+
         setContent {
             ProyectoTheme {
                 var pantallaActual by remember { mutableStateOf("login") }
                 var usuarioActual by remember { mutableStateOf<User?>(null) }
+
                 Scaffold(modifier = Modifier) { innerPadding ->
                     when (pantallaActual) {
                         "login" -> Greeting(
@@ -76,22 +79,7 @@ class MainActivity : ComponentActivity() {
                                 "CreateSubgrupo" -> CreateSubgrupo(
                         onBack = { pantallaActual = "Elementos" },
                         onHome = { pantallaActual = "inventory" }
-                        )
-// ---------- PAGINA Create create element ----------
-                        "CreateElement" -> CreateElement(
-                            onBack = { pantallaActual = "Elementos" },
-                            onHome = { pantallaActual = "inventory" }
-                        )
-// ---------- PAGINA Create Entrada ----------
-                        "CreateEntrada" -> CreateEntrada(
-                            onBack = { pantallaActual = "inventory" },
-                            onHome = { pantallaActual = "inventory" }
-                        )
-// ---------- PAGINA Create Salida ----------
-                        "CreateSalida" -> CreateSalida(
-                            onBack = { pantallaActual = "inventory" },
-                            onHome = { pantallaActual = "inventory" }
-                        )
+                    )
                     }
                 }
             }
@@ -106,7 +94,9 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
     var passwordUseringresado by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
     var loginMessage by remember { mutableStateOf("") }
+
     Box(modifier = Modifier.fillMaxSize()) {
+        // Título de la app
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -119,6 +109,7 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
                 color = Color.Black
             )
         }
+        // Card con formulario
         Card(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -185,6 +176,7 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
 
                             // Buscar el usuario por su nombre
                             val usuarioEncontrado = userDao.getUserByUsuario(userNameingresado)
+
                             withContext(Dispatchers.Main) {
                                 if (usuarioEncontrado != null) {
                                     // Validar usuario y contraseña
@@ -217,6 +209,7 @@ fun Greeting(modifier: Modifier = Modifier, onLoginSuccess: (User) -> Unit) {
             .padding(16.dp))
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun GreetingPreview() {

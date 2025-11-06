@@ -144,7 +144,6 @@ fun getDatabase(context: Context): AppDatabase {
         .fallbackToDestructiveMigration()
         .build()
 }
-
 //crear el usuario administrador
 fun crearUsuarioAdministrador(context: Context) {
     val db = getDatabase(context)              // Obtiene la base de datos
