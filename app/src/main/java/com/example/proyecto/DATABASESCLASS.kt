@@ -22,7 +22,8 @@ data class User(
 )
 @Entity(tableName = "GrupoProducto")
 data class GrupoProducto(
-    @PrimaryKey(autoGenerate = true) val idGrupo: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    val idGrupo: Int = 0,
     val nombreGrupo: String,
     val codigoNum: Int,
     val codigo: String
@@ -113,6 +114,50 @@ interface UserDao {
     @Query("SELECT usuario FROM usuarios ")
     suspend fun GetAllusers ():  List<String>
 }
+@Dao
+interface CrearElementosDao{
+    //crear Grupo
+    @Insert
+    suspend fun InsertGrupo(grupoIngresado: GrupoProducto)
+    @Query("SELECT COUNT(*) FROM grupoproducto WHERE nombreGrupo = :GrupoIngresado")
+    suspend fun GrupoExists(GrupoIngresado: String): Int
+    @Query("SELECT * FROM GRUPOPRODUCTO WHERE nombreGrupo= :GrupoIngresado Limit 1")
+    suspend fun getgrupobygrupo(GrupoIngresado: String): GrupoProducto?
+    @Query("Select nombreGrupo from grupoproducto")
+    suspend fun GetallGrupos (): List<String>
+
+    // Crear Subgrupo
+    @Insert
+    suspend fun InsertSubGrupo(SubgrupoIngresado: SubgrupoProducto)
+    @Query("SELECT idGrupo FROM grupoproducto WHERE nombreGrupo = :nombre")
+    suspend fun GetIdgrupo(nombre: String): Int
+    @Query("SELECT COUNT(*) FROM subgrupoproducto WHERE nombreSubgrupo = :nombre")
+    suspend fun SubGrupoExists(nombre: String): Int
+    @Query("SELECT * FROM subgrupoproducto WHERE nombreSubgrupo= :nombre Limit 1")
+    suspend fun getSubgrupobygrupo(nombre: String): SubgrupoProducto?
+    @Query("Select nombreSubgrupo from subgrupoproducto")
+    suspend fun GetallSubGrupos (): List<String>
+    //Crear Elementos
+    @Query("Select nombreSubgrupo from subgrupoproducto where idGrupo=:Idgrupoingresado")
+    suspend fun GetallSubGruposbyGrupos (Idgrupoingresado: Int ): List<String>
+    @Query("SELECT idSubgrupo FROM subgrupoproducto WHERE nombreSubgrupo = :nombre")
+    suspend fun GetIdSubgrupo(nombre: String): Int
+    @Query("SELECT COUNT(*) FROM producto ")
+    suspend fun GetnumeroProductos(): Int
+    @Query("SELECT COUNT(*) FROM producto WHERE nombreProducto = :nombre")
+    suspend fun ProductoExiste(nombre: String): Int
+    @Insert
+    suspend fun InsertProducto(ProductoIngresado: Producto): Long
+    @Insert
+    suspend fun InsertExistencia(ProductoIngresado: Existencia)
+    @Query("SELECT idProducto FROM producto WHERE nombreProducto = :nombre")
+    suspend fun GetIdProducto(nombre: String): Int
+    @Query("SELECT nombreProducto FROM producto")
+    suspend fun getallProductos (): List<String>
+    @Query("SELECT * FROM existencia WHERE nombre = :producto LIMIT 1")
+    suspend fun getExistenciaByProductoname(producto: String): Existencia
+
+}
 @Database(
     entities = [
         User::class,
@@ -129,6 +174,7 @@ interface UserDao {
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun crearelementosDao(): CrearElementosDao
 }
 // Función para obtener una instancia de la base de datos
 fun getDatabase(context: Context): AppDatabase {
@@ -145,7 +191,6 @@ fun crearUsuarioAdministrador(context: Context) {
     val db = getDatabase(context)              // Obtiene la base de datos
     val userDao = db.userDao()                 // Accede al DAO
     CoroutineScope(Dispatchers.IO).launch {    // Ejecuta en hilo secundario (Room no permite usar el hilo principal)
-
         val usuarioAdmin = "Administrador"     // Nombre del usuario administrador
         val passwordAdmin = "12345"            // Contraseña por defecto
         val nivelAdmin = 0                     // 0 = Administrador
@@ -165,7 +210,8 @@ fun crearUsuarioAdministrador(context: Context) {
         }
     }
 }
-fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Context, onResult: (String) -> Unit ) {
+fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Context,
+                      onResult: (String) -> Unit ) {
     val db = getDatabase(context)
     val userDao = db.userDao()
 
@@ -185,7 +231,78 @@ fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Con
         }
     }
 }
-fun CrearGrupo(){
 
+fun CrearGrupo(Nombregrupoing: String, CodigoNumerico: Int, CodigoGrupo: String, context: Context,
+               onResult: (String) -> Unit ){
+    val db = getDatabase(context)
+    val CrearElementos = db.crearelementosDao()
+    CoroutineScope(Dispatchers.IO).launch {
+        val existe = CrearElementos.GrupoExists(Nombregrupoing)
+        if (existe == 0) {
+            CrearElementos.InsertGrupo(
+                GrupoProducto(
+                    nombreGrupo = Nombregrupoing,
+                    codigoNum = CodigoNumerico,
+                    codigo = CodigoGrupo
+                )
+            )
+            onResult("Grupo $Nombregrupoing creado correctamente.")
+        } else {
+            onResult("El Grupo $Nombregrupoing ya existe.")
+        }
+    }
 }
 
+fun CrearSubGrupo(Idsubgrupo: Int ,NombreSubgrupoing: String, CodigoNumerico: Int,
+                  CodigoSubGrupo: String, context: Context, onResult: (String) -> Unit ){
+    val db = getDatabase(context)
+    val CrearElementos = db.crearelementosDao()
+    CoroutineScope(Dispatchers.IO).launch {
+        val existe = CrearElementos.SubGrupoExists(NombreSubgrupoing)
+        if (existe == 0) {
+            CrearElementos.InsertSubGrupo(
+                SubgrupoProducto(
+                    idGrupo = Idsubgrupo,
+                    nombreSubgrupo = NombreSubgrupoing,
+                    codigoNum = CodigoNumerico,
+                    codigo = CodigoSubGrupo
+                )
+            )
+            onResult("SubGrupo $NombreSubgrupoing creado correctamente.")
+        } else {
+            onResult("El SubGrupo $NombreSubgrupoing ya existe.")
+        }
+    }
+}
+
+fun CrearElemento(NombreGrupo: String,Nombresubgrupo: String ,nombreProducto: String,ubicacionBodega: String,
+                  observaciones: String,context: Context, onResult: (String) -> Unit ){
+    val db = getDatabase(context)
+    val CrearElementos = db.crearelementosDao()
+    CoroutineScope(Dispatchers.IO).launch {
+        val Gexiste = CrearElementos.GetIdgrupo(NombreGrupo)
+        val SGGexiste = CrearElementos.GetIdSubgrupo(Nombresubgrupo)
+        val ProExxiste = CrearElementos.ProductoExiste(nombreProducto)
+        if (ProExxiste==0){
+            if (Gexiste > 0) {
+                if (SGGexiste > 0){
+                    val NumeroProductos = CrearElementos.GetnumeroProductos()
+                    val nuevoProductoId = CrearElementos.InsertProducto(
+                        Producto (idGrupo= Gexiste,idSubgrupo=SGGexiste,
+                        nombreProducto=nombreProducto, numeroProducto=NumeroProductos,
+                        ubicacionBodega=ubicacionBodega, observaciones =observaciones))
+                    CrearElementos.InsertExistencia(
+                        Existencia ( idProducto = nuevoProductoId.toInt(),
+                            nombre=nombreProducto,existencia=0,valor=0.0))
+                }else{
+                    onResult("El Grupo $Nombresubgrupo No existe.")
+                }
+            } else {
+                onResult("El Grupo $NombreGrupo No existe.")
+            }
+        }else {
+            onResult("El Producto $nombreProducto existe.")
+        }
+
+    }
+}

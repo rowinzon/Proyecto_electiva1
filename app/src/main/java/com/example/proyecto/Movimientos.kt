@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
 @Composable
 fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
@@ -220,6 +221,7 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
     var GrupoCodigoNumtocreate by remember { mutableStateOf("") }
     var GrupoCodigotocreate by remember { mutableStateOf("") }
     var Message by remember { mutableStateOf("") }
+    val context = LocalContext.current
     TopBarButtons(onBack = onBack, onHome = onHome)
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
@@ -275,6 +277,10 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
                 )
                 Button(
                     onClick = {
+                        CrearGrupo(GrupoNametocreate,
+                            GrupoCodigoNumtocreate.toInt(),
+                            GrupoCodigotocreate, context)
+                        { mensaje -> Message = mensaje }
                     }
                 ){
                     Text("Crear")
@@ -294,18 +300,34 @@ fun CreateGrupo(onBack: () -> Unit, onHome: () -> Unit){
 }
 @Composable
 fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
-    var GrupoNametocreate by remember { mutableStateOf("") }
-    var GrupoCodigoNumtocreate by remember { mutableStateOf("") }
-    var GrupoCodigotocreate by remember { mutableStateOf("") }
+    var Grupopertenece by remember { mutableStateOf("") }
+    var SubGrupoNametocreate by remember { mutableStateOf("") }
+    var SubGrupoCodigoNumtocreate by remember { mutableStateOf("") }
+    var SubGrupoCodigotocreate by remember { mutableStateOf("") }
+    var IdGrupopertenece by remember { mutableStateOf<Int?>(null) }
+    val listaGrupos = remember { mutableStateListOf<String>() }
+    val context = LocalContext.current
+    val db = getDatabase(context)
     var Message by remember { mutableStateOf("") }
     TopBarButtons(onBack = onBack, onHome = onHome)
+    LaunchedEffect(Unit) {
+        val db = getDatabase(context)
+        val grupos = db.crearelementosDao().GetallGrupos()
+        listaGrupos.clear()
+        listaGrupos.addAll(grupos)
+    }
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
+    ) {Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        TopBarButtons(onBack = onBack, onHome = onHome)
         Card(
             modifier = Modifier
-                .align(Alignment.Center)
                 .fillMaxWidth(0.9f)
                 .wrapContentHeight(),
             colors = CardDefaults.cardColors(containerColor = Color.LightGray),
@@ -324,6 +346,19 @@ fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
                     modifier = Modifier.padding(8.dp)
                 )
                 //lista pegable de los grupos creados
+                DropdownSelector(
+                    label = "Listado de Grupos",
+                    options = listaGrupos,
+                    selectedIndex = 0,
+                    onOptionSelected = { index ->
+                        Grupopertenece = listaGrupos[index]
+                    }
+                )
+                LaunchedEffect(Grupopertenece) {
+                    if (Grupopertenece.isNotEmpty()) {
+                        IdGrupopertenece = db.crearelementosDao().GetIdgrupo(Grupopertenece)
+                    }
+                }
                 Text(
                     text = "Nombre SubGrupo",
                     color = Color.Black,
@@ -331,8 +366,8 @@ fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
                 )
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = GrupoNametocreate,
-                    onValueChange = { GrupoNametocreate = it },
+                    value = SubGrupoNametocreate,
+                    onValueChange = { SubGrupoNametocreate = it },
                     label = { Text("Nombre SubGrupo a crear") }
                 )
                 Text(
@@ -342,8 +377,8 @@ fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
                 )
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = GrupoCodigoNumtocreate,
-                    onValueChange = { GrupoCodigoNumtocreate = it },
+                    value = SubGrupoCodigoNumtocreate,
+                    onValueChange = { SubGrupoCodigoNumtocreate = it },
                     label = { Text("Codigo Numerico del Subgrupo") }
                 )
                 Text(
@@ -353,14 +388,23 @@ fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
                 )
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = GrupoCodigotocreate,
-                    onValueChange = { GrupoCodigotocreate = it },
+                    value = SubGrupoCodigotocreate,
+                    onValueChange = { SubGrupoCodigotocreate = it },
                     label = { Text("Codigo SubGrupo a crear") }
                 )
-                Button(
-                    onClick = {
+                Button(onClick = {
+                    IdGrupopertenece?.let { id ->
+                        CrearSubGrupo(
+                            id,
+                            SubGrupoNametocreate,
+                            SubGrupoCodigoNumtocreate.toInt(),
+                            SubGrupoCodigotocreate,
+                            context
+                        ) { mensaje -> Message = mensaje }
+                    } ?: run {
+                        Message = "Debe seleccionar un grupo válido."
                     }
-                ){
+                }) {
                     Text("Crear")
                 }
                 if (Message.isNotEmpty()) {
@@ -372,101 +416,151 @@ fun CreateSubgrupo(onBack: () -> Unit, onHome: () -> Unit){
                 }
             }
         }
-        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
-            .padding(16.dp))
+        LogoUan(modifier = Modifier.size(240.dp).padding(16.dp))
+    }
     }
 }
 @Composable
 fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
-    var GrupoName by remember { mutableStateOf("") }
+    var Grupopertenece by remember { mutableStateOf("") }
+    var IdGrupopertenece by remember { mutableStateOf<Int?>(null) }
     var SubGrupoName by remember { mutableStateOf("") }
+    var IdSubGrupopertenece by remember { mutableStateOf<Int?>(null) }
     var NameProducto by remember { mutableStateOf("") }
     var UbicacionAlmacen by remember { mutableStateOf("") }
     var Observaciones by remember { mutableStateOf("") }
+    val listaGrupos = remember { mutableStateListOf<String>() }
+    val listaSubGrupos = remember { mutableStateListOf<String>() }
+    val context = LocalContext.current
+    val db = getDatabase(context)
     var Message by remember { mutableStateOf("") }
-    TopBarButtons(onBack = onBack, onHome = onHome)
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        Column(
             modifier = Modifier
-                .align(Alignment.Center)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TopBarButtons(onBack = onBack, onHome = onHome)
+            Card(modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
-            elevation = CardDefaults.cardElevation(8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Seleccione Grupo",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                //lista deplegable de grupos  GrupoName
-                Text(
-                    text = "Seleccione SubGrupo",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                //lista deplegable de Subgrupos  SubGrupoName
-
-                Text(
-                    text = "Nombre Del Producto",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = NameProducto,
-                    onValueChange = { NameProducto = it },
-                    label = { Text("Nombre Del Producto") }
-                )
-                Text(
-                    text = "Ubicacion en el Almacen",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = UbicacionAlmacen,
-                    onValueChange = { UbicacionAlmacen = it },
-                    label = { Text("Ubicacion") }
-                )
-                Text(
-                    text = "Observaciones",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = Observaciones,
-                    onValueChange = { Observaciones = it },
-                    label = { Text("Observaciones") }
-                )
-                Button(
-                    onClick = {
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LaunchedEffect(Unit) {
+                        val db = getDatabase(context)
+                        val grupos = db.crearelementosDao().GetallGrupos()
+                        listaGrupos.clear()
+                        listaGrupos.addAll(grupos)
                     }
-                ){
-                    Text("Crear")
-                }
-                if (Message.isNotEmpty()) {
                     Text(
-                        text = Message,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.error
+                        text = "Seleccione Grupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
                     )
+                    DropdownSelector(
+                        label = "Listado de Grupos",
+                        options = listaGrupos,
+                        selectedIndex = 0,
+                        onOptionSelected = { index ->
+                            Grupopertenece = listaGrupos[index]
+                        }
+                    )
+                    Text(
+                        text = "Seleccione SubGrupo",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    //lista deplegable de Subgrupos  SubGrupoName
+                    DropdownSelector(
+                        label = "Listado de SubGrupos",
+                        options = listaSubGrupos,
+                        selectedIndex = 0,
+                        onOptionSelected = { index ->
+                            SubGrupoName = listaSubGrupos[index]
+                        }
+                    )
+                    LaunchedEffect(Grupopertenece) {
+                        if (Grupopertenece.isNotEmpty()) {
+                            // 1. Obtener ID del grupo seleccionado
+                            val idGrupo = db.crearelementosDao().GetIdgrupo(Grupopertenece)
+
+                            // 2. Guardar el ID
+                            IdGrupopertenece = idGrupo
+
+                            // 3. Cargar subgrupos asociados
+                            val subgrupos = db.crearelementosDao().GetallSubGruposbyGrupos(idGrupo)
+                            listaSubGrupos.clear()
+                            listaSubGrupos.addAll(subgrupos)
+                        }
+                    }
+                    Text(
+                        text = "Nombre Del Producto",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = NameProducto,
+                        onValueChange = { NameProducto = it },
+                        label = { Text("Nombre Del Producto") }
+                    )
+                    Text(
+                        text = "Ubicacion en el Almacen",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = UbicacionAlmacen,
+                        onValueChange = { UbicacionAlmacen = it },
+                        label = { Text("Ubicacion") }
+                    )
+                    Text(
+                        text = "Observaciones",
+                        color = Color.Black,
+                        modifier = Modifier.padding(8.dp),
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = Observaciones,
+                        onValueChange = { Observaciones = it },
+                        label = { Text("Observaciones") }
+                    )
+                    Button(
+                        onClick = {
+                            CrearElemento(Grupopertenece,
+                                SubGrupoName,
+                                NameProducto,
+                                UbicacionAlmacen,
+                                Observaciones ,context
+                            ) { mensaje -> Message = mensaje }
+                        }
+                    ){
+                        Text("Crear")
+                    }
+                    if (Message.isNotEmpty()) {
+                        Text(
+                            text = Message,
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
+            LogoUan(modifier = Modifier.size(240.dp).padding(16.dp))
         }
-        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
-            .padding(16.dp))
     }
 }
 @Composable
@@ -654,6 +748,91 @@ fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
         }
     }
 }
+@Composable
+fun Stock(onBack: () -> Unit, onHome: () -> Unit) {
+    val listaElementos = remember { mutableStateListOf<String>() }
+    var ProductoName by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val db = getDatabase(context)
+
+    // Estado para guardar la cantidad
+    var cantidad by remember { mutableStateOf(0) }
+    var Valor by remember { mutableStateOf("") }
+
+    // Cargar lista de productos
+    LaunchedEffect(Unit) {
+        val grupos = db.crearelementosDao().getallProductos()
+        listaElementos.clear()
+        listaElementos.addAll(grupos)
+    }
+
+    // ✅ Cargar la cantidad al seleccionar un producto
+    LaunchedEffect(ProductoName) {
+        if (ProductoName.isNotEmpty()) {
+            val existencia = db.crearelementosDao()
+                .getExistenciaByProductoname(ProductoName)
+            cantidad=existencia.existencia
+            Valor = existencia.valor.toString()
+        }
+    }
+
+    TopBarButtons(onBack = onBack, onHome = onHome)
+
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Card(
+                modifier = Modifier.fillMaxWidth(0.9f),
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    DropdownSelector(
+                        label = "Elementos",
+                        options = listaElementos,
+                        selectedIndex = 0,
+                        onOptionSelected = { index ->
+                            ProductoName = listaElementos[index]
+                        }
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Cantidad disponible", color = Color.Black)
+                        Text( cantidad.toString(), color = Color.Black)
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Valor Actual", color = Color.Black)
+                        Text( Valor, color = Color.Black)
+                    }
+                }
+            }
+            LogoUan(modifier = Modifier.size(240.dp).padding(16.dp))
+        }
+    }
+}
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
@@ -662,7 +841,8 @@ fun PantallaAMovimientosPreview() {
     //Elementos(onBack = {}, onHome = {},onNavigateTo = {})
     //CreateGrupo(onBack = {}, onHome = {})
     //CreateSubgrupo(onBack = {}, onHome = {})
-    CreateElement(onBack = {}, onHome = {})
+    //CreateElement(onBack = {}, onHome = {})
     //CreateEntrada(onBack = {}, onHome = {})
     //CreateSalida (onBack = {}, onHome = {})
+    Stock (onBack = {}, onHome = {})
 }

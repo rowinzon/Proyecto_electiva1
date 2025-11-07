@@ -50,6 +50,11 @@ class MainActivity : ComponentActivity() {
                             onNavigateTo = { destino -> pantallaActual = destino }
                         )
 // ---------- PAGINA SETTINGS ----------
+                        "Stock" -> Stock(
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
+// ---------- PAGINA SETTINGS ----------
                         "settings" -> AccionesConf(
                             onBack = { pantallaActual = "inventory" },
                             onHome = { pantallaActual = "inventory" }
@@ -80,6 +85,21 @@ class MainActivity : ComponentActivity() {
                         onBack = { pantallaActual = "Elementos" },
                         onHome = { pantallaActual = "inventory" }
                     )
+// ---------- PAGINA Create create element ----------
+                        "CreateElement" -> CreateElement(
+                            onBack = { pantallaActual = "Elementos" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
+// ---------- PAGINA Create Entrada ----------
+                        "CreateEntrada" -> CreateEntrada(
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
+// ---------- PAGINA Create Salida ----------
+                        "CreateSalida" -> CreateSalida(
+                            onBack = { pantallaActual = "inventory" },
+                            onHome = { pantallaActual = "inventory" }
+                        )
                     }
                 }
             }
