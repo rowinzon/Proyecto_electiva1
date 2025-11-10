@@ -28,7 +28,6 @@ data class GrupoProducto(
     val codigoNum: Int,
     val codigo: String
 )
-
 @Entity(tableName = "SubgrupoProducto")
 data class SubgrupoProducto(
     @PrimaryKey(autoGenerate = true) val idSubgrupo: Int = 0,
@@ -48,7 +47,6 @@ data class Producto(
     val ubicacionBodega: String,
     val observaciones: String? = null
 )
-
 @Entity(tableName = "Existencia")
 data class Existencia(
     @PrimaryKey val idProducto: Int,
@@ -56,7 +54,6 @@ data class Existencia(
     val existencia: Int = 0,
     val valor: Double = 0.0
 )
-
 @Entity(tableName = "HistorialInventario")
 data class HistorialInventario(
     @PrimaryKey(autoGenerate = true) val idHistorial: Int = 0,
@@ -67,7 +64,6 @@ data class HistorialInventario(
     val salidas: Int = 0,
     val valor: Double
 )
-
 @Entity(tableName = "Salida")
 data class Salida(
     @PrimaryKey(autoGenerate = true) val idSalida: Int = 0,
@@ -78,7 +74,6 @@ data class Salida(
     val cliente: String,
     val observaciones: String? = null
 )
-
 @Entity(tableName = "entradas")
 data class Entrada(
     @PrimaryKey(autoGenerate = true) val idEntrada: Int = 0,
@@ -86,7 +81,6 @@ data class Entrada(
     val proveedor: String,
     val observaciones: String? = null
 )
-
 @Entity(tableName = "DetalleEntrada")
 data class DetalleEntrada(
     @PrimaryKey(autoGenerate = true) val idDetalle: Int = 0,
@@ -95,7 +89,6 @@ data class DetalleEntrada(
     val cantidad: Int,
     val valorEntrada: Double
 )
-
 @Dao
 interface UserDao {
     //eliminar usuario
@@ -154,9 +147,18 @@ interface CrearElementosDao{
     suspend fun GetIdProducto(nombre: String): Int
     @Query("SELECT nombreProducto FROM producto")
     suspend fun getallProductos (): List<String>
-    @Query("SELECT * FROM existencia WHERE nombre = :producto LIMIT 1")
-    suspend fun getExistenciaByProductoname(producto: String): Existencia
+    //actualizar existencia
+    // Obtiene la existencia (cantidad) actual por nombre de producto
+    @Query("SELECT existencia FROM Existencia WHERE nombre = :nombre LIMIT 1")
+    suspend fun getExistenciaByProductoname(nombre: String): Int?
 
+    // Actualiza existencia y valor del producto por idProducto
+    @Query("UPDATE Existencia SET existencia = :nuevaExistencia, valor = :nuevoValor WHERE idProducto = :id")
+    suspend fun actualizarExistenciaYValor(id: Int, nuevaExistencia: Int, nuevoValor: Double)
+
+    // Si prefieres obtener la entidad completa:
+    @Query("SELECT * FROM Existencia WHERE nombre = :nombre LIMIT 1")
+    suspend fun getExistenciaEntityByProductoname(nombre: String): Existencia?
 }
 @Database(
     entities = [
@@ -175,7 +177,9 @@ interface CrearElementosDao{
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun crearelementosDao(): CrearElementosDao
+    abstract fun entradaDao(): EntradaDao
 }
+
 // Función para obtener una instancia de la base de datos
 fun getDatabase(context: Context): AppDatabase {
     return Room.databaseBuilder(
@@ -231,7 +235,6 @@ fun crearNuevoUsuario(nombre: String, password: String, nivel: Int, context: Con
         }
     }
 }
-
 fun CrearGrupo(Nombregrupoing: String, CodigoNumerico: Int, CodigoGrupo: String, context: Context,
                onResult: (String) -> Unit ){
     val db = getDatabase(context)
@@ -252,7 +255,6 @@ fun CrearGrupo(Nombregrupoing: String, CodigoNumerico: Int, CodigoGrupo: String,
         }
     }
 }
-
 fun CrearSubGrupo(Idsubgrupo: Int ,NombreSubgrupoing: String, CodigoNumerico: Int,
                   CodigoSubGrupo: String, context: Context, onResult: (String) -> Unit ){
     val db = getDatabase(context)
@@ -274,7 +276,6 @@ fun CrearSubGrupo(Idsubgrupo: Int ,NombreSubgrupoing: String, CodigoNumerico: In
         }
     }
 }
-
 fun CrearElemento(NombreGrupo: String,Nombresubgrupo: String ,nombreProducto: String,ubicacionBodega: String,
                   observaciones: String,context: Context, onResult: (String) -> Unit ){
     val db = getDatabase(context)
@@ -305,4 +306,18 @@ fun CrearElemento(NombreGrupo: String,Nombresubgrupo: String ,nombreProducto: St
         }
 
     }
+}
+data class ProductoEntrada(
+    val nombre: String,
+    val cantidad: Int,
+    val valorEntrada: Double
+)
+@Dao
+interface EntradaDao {
+
+    @Insert
+    suspend fun insertarEntrada(entrada: Entrada): Long
+
+    @Insert
+    suspend fun insertarDetalles(detalles: List<DetalleEntrada>)
 }
