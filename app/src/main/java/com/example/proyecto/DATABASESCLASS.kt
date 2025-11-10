@@ -314,10 +314,8 @@ data class ProductoEntrada(
 )
 @Dao
 interface EntradaDao {
-
     @Insert
     suspend fun insertarEntrada(entrada: Entrada): Long
-
     @Insert
     suspend fun insertarDetalles(detalles: List<DetalleEntrada>)
 }
