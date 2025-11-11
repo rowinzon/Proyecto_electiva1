@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import androidx.room.Room
 import kotlinx.coroutines.*
 import androidx.room.Delete
@@ -152,28 +153,18 @@ interface CrearElementosDao{
     @Query("SELECT existencia FROM Existencia WHERE nombre = :nombre LIMIT 1")
     suspend fun getExistenciaByProductoname(nombre: String): Int?
 
-    // Actualiza existencia y valor del producto por idProducto
     @Query("UPDATE Existencia SET existencia = :nuevaExistencia, valor = :nuevoValor WHERE idProducto = :id")
     suspend fun actualizarExistenciaYValor(id: Int, nuevaExistencia: Int, nuevoValor: Double)
 
-    // Si prefieres obtener la entidad completa:
     @Query("SELECT * FROM Existencia WHERE nombre = :nombre LIMIT 1")
     suspend fun getExistenciaEntityByProductoname(nombre: String): Existencia?
+    @Insert
+    suspend fun InsertSalida(Salidacreada: Salida)
 }
 @Database(
-    entities = [
-        User::class,
-        GrupoProducto::class,
-        SubgrupoProducto::class,
-        Producto::class,
-        Existencia::class,
-        HistorialInventario::class,
-        Salida::class,
-        Entrada::class,
-        DetalleEntrada::class
-    ],
-    version = 2
-)
+    entities = [ User::class, GrupoProducto::class, SubgrupoProducto::class, Producto::class,
+        Existencia::class, HistorialInventario::class, Salida::class, Entrada::class,
+        DetalleEntrada::class], version = 2 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun crearelementosDao(): CrearElementosDao
@@ -276,8 +267,9 @@ fun CrearSubGrupo(Idsubgrupo: Int ,NombreSubgrupoing: String, CodigoNumerico: In
         }
     }
 }
-fun CrearElemento(NombreGrupo: String,Nombresubgrupo: String ,nombreProducto: String,ubicacionBodega: String,
-                  observaciones: String,context: Context, onResult: (String) -> Unit ){
+fun CrearElemento(NombreGrupo: String,Nombresubgrupo: String ,nombreProducto: String,
+                  ubicacionBodega: String, observaciones: String,context: Context,
+                  onResult: (String) -> Unit ){
     val db = getDatabase(context)
     val CrearElementos = db.crearelementosDao()
     CoroutineScope(Dispatchers.IO).launch {
@@ -318,4 +310,38 @@ interface EntradaDao {
     suspend fun insertarEntrada(entrada: Entrada): Long
     @Insert
     suspend fun insertarDetalles(detalles: List<DetalleEntrada>)
+}
+
+fun CrearSalida (ElementoSaliente: String,CantidadSaliente: Int,Entrego: String,Cliente: String,
+                 Observaciones: String,context: Context, onResult: (String) -> Unit ){
+    val db = getDatabase(context)
+    val CrearElementos = db.crearelementosDao()
+    CoroutineScope(Dispatchers.IO).launch {
+        val Existente = CrearElementos.getExistenciaEntityByProductoname(ElementoSaliente)
+        if (Existente == null) {
+            withContext(Dispatchers.Main) {
+                onResult("El producto '$ElementoSaliente' no existe en inventario.")
+            }
+            return@launch
+        }
+        val NuevaExistencia = Existente.existencia - CantidadSaliente
+        if ( NuevaExistencia < 0){
+            withContext(Dispatchers.Main) {
+                onResult("No puede salir una cantidad mayor a la existente en stock.")
+            }
+            return@launch
+        }
+        CrearElementos.actualizarExistenciaYValor(id= Existente.idProducto, nuevaExistencia = NuevaExistencia,
+            nuevoValor = Existente.valor)
+        val salida = Salida(
+            fecha = System.currentTimeMillis(),
+            idProducto = Existente.idProducto,
+            cantidad = NuevaExistencia,
+            responsable = Entrego,
+            cliente = Cliente,
+            observaciones = Observaciones
+        )
+        CrearElementos.InsertSalida(salida)
+        onResult("Se creo la Salida correctamente ")
+    }
 }
