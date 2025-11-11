@@ -451,7 +451,7 @@ fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
                 .wrapContentHeight(),
                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
                 elevation = CardDefaults.cardElevation(8.dp)
-                ) {
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
