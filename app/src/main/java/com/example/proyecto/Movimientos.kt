@@ -29,8 +29,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 @Composable
 fun CreateNewUser(onBack: () -> Unit,onHome: () -> Unit) {
     val context = LocalContext.current
@@ -564,87 +565,176 @@ fun CreateElement(onBack: () -> Unit, onHome: () -> Unit){
     }
 }
 @Composable
-fun CreateEntrada(onBack: () -> Unit, onHome: () -> Unit){
+fun CreateEntrada(onBack: () -> Unit, onHome: () -> Unit) {
     var CantidadEntrante by remember { mutableStateOf("") }
+    var ValorEntrada by remember { mutableStateOf("") }
     var Observaciones by remember { mutableStateOf("") }
     var Proveedor by remember { mutableStateOf("") }
+    val listaElementos = remember { mutableStateListOf<String>() }
+    var ProductoName by remember { mutableStateOf("") }
+    // ✅ Lista de productos agregados a la entrada
+    val listaProductosEntrada = remember { mutableStateListOf<ProductoEntrada>() }
+    val context = LocalContext.current
+    val db = getDatabase(context)
     var Message by remember { mutableStateOf("") }
-    TopBarButtons(onBack = onBack, onHome = onHome)
+    // ✅ Cargar lista desplegable de productos
+    LaunchedEffect(Unit) {
+        val productos = db.crearelementosDao().getallProductos()
+        listaElementos.clear()
+        listaElementos.addAll(productos)
+    }
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
     ) {
-        Card(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.9f)
-                .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = Color.LightGray),
-            elevation = CardDefaults.cardElevation(8.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            TopBarButtons(onBack = onBack, onHome = onHome)
+            Card(
+                modifier = Modifier.fillMaxWidth(0.9f),
+                colors = CardDefaults.cardColors(containerColor = Color.LightGray),
+                elevation = CardDefaults.cardElevation(8.dp)
             ) {
-                Text(
-                    text = "Seleccione el elemento",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                //lista pegable de elementos
-                Text(
-                    text = "Cantidad",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = CantidadEntrante,
-                    onValueChange = { CantidadEntrante = it },
-                    label = { Text("Cantidad que va a ingresar") }
-                )
-                Text(
-                    text = "Proveedor",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = Proveedor,
-                    onValueChange = { Proveedor = it },
-                    label = { Text("Proveedor") }
-                )
-                Text(
-                    text = "Observaciones",
-                    color = Color.Black,
-                    modifier = Modifier.padding(8.dp),
-                )
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = Observaciones,
-                    onValueChange = { Observaciones = it },
-                    label = { Text("Observaciones") }
-                )
-                Button(
-                    onClick = {
-                    }
-                ){
-                    Text("Crear")
-                }
-                if (Message.isNotEmpty()) {
-                    Text(
-                        text = Message,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.error
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // -------- SELECCIONAR PRODUCTO --------
+                    Text("Seleccione el producto", color = Color.Black)
+                    DropdownSelector(
+                        label = "Productos",
+                        options = listaElementos,
+                        selectedIndex = 0,
+                        onOptionSelected = { index ->
+                            ProductoName = listaElementos[index]
+                        }
                     )
+                    // -------- CANTIDAD --------
+                    TextField(
+                        value = CantidadEntrante,
+                        onValueChange = { CantidadEntrante = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Cantidad") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    // -------- VALOR --------
+                    TextField(
+                        value = ValorEntrada,
+                        onValueChange = { ValorEntrada = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Valor de entrada") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    // ✅ Botón para agregar producto
+                    Button(
+                        onClick = {
+                            if (
+                                ProductoName.isNotEmpty() &&
+                                CantidadEntrante.isNotEmpty() &&
+                                ValorEntrada.isNotEmpty()
+                            ) {
+                                listaProductosEntrada.add(
+                                    ProductoEntrada(
+                                        nombre = ProductoName,
+                                        cantidad = CantidadEntrante.toInt(),
+                                        valorEntrada = ValorEntrada.toDouble()
+                                    )
+                                )
+                                CantidadEntrante = ""
+                                ValorEntrada = ""
+                                Message = "Producto agregado"
+                            } else {
+                                Message = "Complete producto, cantidad y valor"
+                            }
+                        }
+                    ) {
+                        Text("Agregar Producto")
+                    }
+                    // ✅ Mostrar productos agregados
+                    if (listaProductosEntrada.isNotEmpty()) {
+                        Text("Productos agregados:", color = Color.Black, fontSize = 18.sp)
+
+                        listaProductosEntrada.forEach {
+                            Text("- ${it.nombre} → ${it.cantidad} unidades @ ${it.valorEntrada}", color = Color.Black)
+                        }
+                    }
+                    // -------- DATOS GENERALES DE LA ENTRADA --------
+                    TextField(
+                        value = Proveedor,
+                        onValueChange = { Proveedor = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Proveedor") }
+                    )
+                    TextField(
+                        value = Observaciones,
+                        onValueChange = { Observaciones = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Observaciones") }
+                    )
+                    // ✅ CREAR ENTRADA
+                    Button(
+                        onClick = {
+                            if (Proveedor.isEmpty() || listaProductosEntrada.isEmpty()) {
+                                Message = "Faltan datos para crear la entrada."
+                                return@Button
+                            }
+                            CoroutineScope(Dispatchers.IO).launch {
+                                // 1️⃣ Insertar entrada principal
+                                val idEntrada = db.entradaDao().insertarEntrada(
+                                    Entrada(
+                                        fecha = System.currentTimeMillis(),
+                                        proveedor = Proveedor,
+                                        observaciones = Observaciones
+                                    )
+                                ).toInt()
+                                // 2️⃣ Insertar cada detalle y actualizar existencias
+                                val detalles = listaProductosEntrada.map { producto ->
+                                    val idProducto = db.crearelementosDao().GetIdProducto(producto.nombre)
+                                    val existenciaActual = db.crearelementosDao()
+                                        .getExistenciaByProductoname(producto.nombre) ?: 0
+                                    val nuevaExistencia = existenciaActual + producto.cantidad
+                                    // ✅ Actualizar existencia y valor
+                                    db.crearelementosDao().actualizarExistenciaYValor(
+                                        id = idProducto,
+                                        nuevaExistencia = nuevaExistencia,
+                                        nuevoValor = producto.valorEntrada
+                                    )
+                                    DetalleEntrada(
+                                        idEntrada = idEntrada,
+                                        idProducto = idProducto,
+                                        cantidad = producto.cantidad,
+                                        valorEntrada = producto.valorEntrada
+                                    )
+                                }
+                                db.entradaDao().insertarDetalles(detalles)
+                                withContext(Dispatchers.Main) {
+                                    Message = "Entrada creada exitosamente."
+                                    listaProductosEntrada.clear()
+                                    Proveedor = ""
+                                    Observaciones = ""
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Crear Entrada")
+                    }
+                    if (Message.isNotEmpty()) {
+                        Text(
+                            text = Message,
+                            fontSize = 16.sp,
+                            color = Color.Red
+                        )
+                    }
                 }
             }
+            LogoUan(modifier = Modifier.size(240.dp).padding(16.dp))
         }
-        LogoUan(modifier = Modifier.size(240.dp).align(Alignment.BottomCenter)
-            .padding(16.dp))
     }
 }
 @Composable
@@ -654,6 +744,19 @@ fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
     var Entrego by remember { mutableStateOf("") }
     var Cliente by remember { mutableStateOf("") }
     var Message by remember { mutableStateOf("") }
+    val listaElementos = remember { mutableStateListOf<String>() }
+    var selectedIndex by remember { mutableStateOf(0) }
+    var ProductoName by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val db = getDatabase(context)
+    LaunchedEffect(Unit) {
+        val productos = db.crearelementosDao().getallProductos()
+        listaElementos.clear()
+        listaElementos.addAll(productos)
+        if (productos.isNotEmpty()) {
+            ProductoName = productos[0]
+        }
+    }
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
@@ -685,6 +788,15 @@ fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
                         modifier = Modifier.padding(8.dp),
                     )
                     //lista pegable de elementos
+                    DropdownSelector(
+                        label = "Elementos",
+                        options = listaElementos,
+                        selectedIndex = selectedIndex,
+                        onOptionSelected = { index ->
+                            selectedIndex = index
+                            ProductoName = listaElementos[index]
+                        }
+                    )
                     Text(
                         text = "Cantidad",
                         color = Color.Black,
@@ -731,10 +843,27 @@ fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
                     )
                     Button(
                         onClick = {
+
+                            if (CantidadSaliente.isEmpty()) {
+                                Message = "Debe ingresar una cantidad."
+                                return@Button
+                            }
+                            if (Entrego.isEmpty()) {
+                                Message = "Debe ingresar quién entrega."
+                                return@Button
+                            }
+                            if (Cliente.isEmpty()) {
+                                Message = "Debe ingresar quién recibe."
+                                return@Button
+                            }
+                            CrearSalida(ProductoName, CantidadSaliente.toInt(),
+                                Entrego, Cliente, Observaciones, context) { mensaje ->
+                                Message = mensaje }
                         }
                     ) {
-                        Text("Crear")
+                        Text("Dar Salida")
                     }
+
                     if (Message.isNotEmpty()) {
                         Text(
                             text = Message,
@@ -751,33 +880,34 @@ fun CreateSalida(onBack: () -> Unit, onHome: () -> Unit){
 @Composable
 fun Stock(onBack: () -> Unit, onHome: () -> Unit) {
     val listaElementos = remember { mutableStateListOf<String>() }
+    var selectedIndex by remember { mutableStateOf(0) }
     var ProductoName by remember { mutableStateOf("") }
+    var cantidad by remember { mutableStateOf("") }
+    var Valor by remember { mutableStateOf("") }
     val context = LocalContext.current
     val db = getDatabase(context)
-
-    // Estado para guardar la cantidad
-    var cantidad by remember { mutableStateOf(0) }
-    var Valor by remember { mutableStateOf("") }
-
-    // Cargar lista de productos
     LaunchedEffect(Unit) {
-        val grupos = db.crearelementosDao().getallProductos()
+        val productos = db.crearelementosDao().getallProductos()
         listaElementos.clear()
-        listaElementos.addAll(grupos)
-    }
-
-    // ✅ Cargar la cantidad al seleccionar un producto
-    LaunchedEffect(ProductoName) {
-        if (ProductoName.isNotEmpty()) {
-            val existencia = db.crearelementosDao()
-                .getExistenciaByProductoname(ProductoName)
-            cantidad=existencia.existencia
-            Valor = existencia.valor.toString()
+        listaElementos.addAll(productos)
+        if (productos.isNotEmpty()) {
+            ProductoName = productos[0]
         }
     }
-
+    LaunchedEffect(ProductoName) {
+        if (ProductoName.isNotEmpty()) {
+            val existenciaEntity = db.crearelementosDao()
+                .getExistenciaEntityByProductoname(ProductoName)
+            if (existenciaEntity != null) {
+                cantidad = existenciaEntity.existencia.toString()
+                Valor = existenciaEntity.valor.toString()
+            } else {
+                cantidad = "0"
+                Valor = "0.0"
+            }
+        }
+    }
     TopBarButtons(onBack = onBack, onHome = onHome)
-
     Box(
         modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
@@ -787,13 +917,11 @@ fun Stock(onBack: () -> Unit, onHome: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Card(
                 modifier = Modifier.fillMaxWidth(0.9f),
                 colors = CardDefaults.cardColors(containerColor = Color.LightGray),
                 elevation = CardDefaults.cardElevation(8.dp)
             ) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -801,31 +929,28 @@ fun Stock(onBack: () -> Unit, onHome: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     DropdownSelector(
                         label = "Elementos",
                         options = listaElementos,
-                        selectedIndex = 0,
+                        selectedIndex = selectedIndex,
                         onOptionSelected = { index ->
+                            selectedIndex = index
                             ProductoName = listaElementos[index]
                         }
                     )
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Cantidad disponible", color = Color.Black)
-                        Text( cantidad.toString(), color = Color.Black)
+                        Text(cantidad, color = Color.Black)
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text("Valor Actual", color = Color.Black)
-                        Text( Valor, color = Color.Black)
+                        Text(Valor, color = Color.Black)
                     }
                 }
             }
@@ -833,6 +958,7 @@ fun Stock(onBack: () -> Unit, onHome: () -> Unit) {
         }
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PantallaAMovimientosPreview() {
@@ -843,6 +969,6 @@ fun PantallaAMovimientosPreview() {
     //CreateSubgrupo(onBack = {}, onHome = {})
     //CreateElement(onBack = {}, onHome = {})
     //CreateEntrada(onBack = {}, onHome = {})
-    //CreateSalida (onBack = {}, onHome = {})
-    Stock (onBack = {}, onHome = {})
+    CreateSalida (onBack = {}, onHome = {})
+    //Stock (onBack = {}, onHome = {})
 }
