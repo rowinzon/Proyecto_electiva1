@@ -60,13 +60,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
 
-    implementation("androidx.compose.material:material-icons-extended:1.7.0")
-    implementation("androidx.navigation:navigation-compose:2.9.0")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("androidx.navigation:navigation-compose:2.9.6")
 
 //    CAMBIO PARA BASES DE DATOS
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.8.3")
+    kapt("androidx.room:room-compiler:2.8.3")
+    implementation("androidx.room:room-ktx:2.8.3")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
